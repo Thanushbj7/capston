@@ -1,0 +1,16 @@
+
+<h1 >GET HOME INSURE</h1>
+<div>
+  <ul>
+    <li><a routerLink="/home">Home</a></li>
+    <li><a routerLink="/homeinsurance">Plans</a></li>
+    <li><a routerLink="/search">search</a></li>
+    <!-- <li *ngFor="let type of planTypes">
+      <a routerLink="/investments/{{type}}">{{type}}</a>
+    </li> -->
+    <li><a routerLink="/contact">contactus</a></li>
+  <div [ngStyle]="{'text-align': 'right'}">
+  <a [routerLink]="['/admin']" routerLinkActive="router-link-active" >admin</a>
+</div> 
+</ul>
+</div>

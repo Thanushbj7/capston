@@ -1,0 +1,21 @@
+<div [ngStyle]="{'text-align':'center'}">
+    <label for="propertyName">Enter propertyName</label>
+    <select #propertyName>
+        <option value="term">Term</option>
+        <option value="coverage">Coverage </option>
+        <option value="premium">Premium</option>
+    </select>
+    <label for="choice">Enter Choice</label>
+    <input type="text" #choice>
+    <button (click)="show(propertyName.value,choice.value)">Show Plans</button><br>
+
+
+
+    
+    
+    <!-- <label for="cost">Enter Cost</label>
+    <input type="text" #cost>
+    <label for="sqrFeet">Enter sqrFeet</label>
+    <input type="text" #sqrFeet>
+    <button (click)="calculate(cost.value ,sqrFeet.value)">calculate</button> -->
+    </div>

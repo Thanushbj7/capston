@@ -1,0 +1,41 @@
+<form #addForm="ngForm" (ngSubmit)="onSubmit(addForm)" novalidate>
+    <table> 
+        <tr>
+            <td>
+                <label for="name">Insurance Name</label>
+            </td>
+            <td><input type="text" name="name" [(ngModel)]="homeinsurance.name"></td>
+        </tr>
+        <tr>
+            <td>
+                <label for="sumAssured">SumAssured</label>
+            </td>
+            <td><input type="text" name="sumAssured" #sumAssured="ngModel" [(ngModel)]="homeinsurance.sumAssured"></td>
+        </tr>
+         <tr>
+            <td>
+                <label for="coverage">coverage</label>
+            </td>
+            <td><input type="text" name="coverage" #coverage="ngModel" [(ngModel)]="homeinsurance.coverage"></td>
+        </tr> 
+       
+
+    <tr>
+        <td>
+            <label for="term">term</label>
+        </td>
+        <td><input type="text" name="term" #term="ngModel" [(ngModel)]="homeinsurance.term"></td>
+    </tr> 
+    <tr>
+        <td>
+            <label for="premium">premium</label>
+        </td>
+        <td><input type="text" name="premium" #premium="ngModel" [(ngModel)]="homeinsurance.premium"></td>
+    </tr> 
+   
+    
+    
+        <td><input type="submit" value="Add Investment" [disabled]="!addForm.valid"></td>
+ 
+</table></form>
+     

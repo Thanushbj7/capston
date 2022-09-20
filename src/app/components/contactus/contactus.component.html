@@ -1,0 +1,38 @@
+<div [ngStyle]="{'margin-top':'10px','text-align':'center'}">
+    <h1>Connect with us for your need</h1>
+    <form #contactForm="ngForm" (ngSubmit)="onRegister(contactForm)">
+        <table>
+            <tr>
+                <td><label for="username">Name</label></td>
+                <td><input type="text" name="username" #username="ngModel" [(ngModel)]="user.username"></td>
+            </tr>
+            <tr>
+                <td><label for="city">City</label></td>
+                <td><input type="text" name="city" #city="ngModel" [(ngModel)]="user.city"></td>
+            </tr>
+            <tr>
+                <td><label for="email">Email</label></td>
+                <td><input type="text" name="email" #email="ngModel" [(ngModel)]="user.email"></td>
+            </tr>
+            <tr>
+                <td><label for="gender">Gender</label></td>
+                <td><input type="radio" name="gender" value="male" #gender="ngModel" [(ngModel)]="user.gender">Male 
+                    <br><input type="radio" name="gender" value="female" #gender="ngModel" [(ngModel)]="user.gender">Female</td>
+            </tr>
+            <!-- <tr>
+                <td><label for="tenure">Tenure</label></td>
+                <td><input type="radio" name="tenure" value="One Year" #tenure="ngModel" [(ngModel)]="user.tenure">One Year
+                    <br><input type="radio" name="tenure" value="Two Year" #tenure="ngModel" [(ngModel)]="user.tenure">Two Year
+                    <br><input type="radio" name="tenure" value="Three Year" #tenure="ngModel" [(ngModel)]="user.tenure">Three Year</td>
+            </tr> -->
+            <tr>
+                <td><input type="submit" value="ContactUs"></td>
+                
+            </tr>
+        
+        </table>
+    </form>
+   
+</div>
+
+

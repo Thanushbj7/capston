@@ -1,0 +1,16 @@
+
+<div>
+
+    <ol [ngStyle]="{'list-style-type':'none'}">
+        <li *ngFor ="let homeinsurance of homeinsurances">
+            <h4>Name: {{homeinsurance.name}}<br>
+                Term:{{homeinsurance.term}}<br>
+                Coverage:{{homeinsurance.coverage}}<br>
+                <button (click)="show(homeinsurance.insuranceId)">Show Details</button>
+            </h4>
+
+        </li>
+    </ol>
+
+
+</div>
