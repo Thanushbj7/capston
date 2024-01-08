@@ -221,6 +221,5 @@ public class LogProcessor {
 
     // ... (rest of your code remains unchanged)
 }
-	    
 	
 
