@@ -167,7 +167,53 @@ public class LogProcessor {
     // ... (rest of your code remains unchanged)
 }
 
-	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+				import java.io.*;
+
+public class LogProcessor {
+
+    private static final String OUTPUT_FILE_PATH = "output.txt";
+
+    public static void main(String[] args) {
+        File logFile = new File("your_log_file_path.txt"); // Replace with the actual path to your log file
+        processLogFile(logFile);
+    }
+
+    private static void processLogFile(File logFile) {
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(OUTPUT_FILE_PATH);
+            PrintStream filePrintStream = new PrintStream(fileOutputStream);
+
+            // Redirect System.out to the file
+            System.setOut(filePrintStream);
+
+            readLogFile(logFile);
+
+            // Close the file stream to ensure the data is written
+            filePrintStream.close();
+
+            System.out.println("Log data has been written to " + OUTPUT_FILE_PATH);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // ... (rest of your code remains unchanged)
+}
 	    
 	
 
