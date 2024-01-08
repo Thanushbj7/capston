@@ -22,9 +22,16 @@ import java.io.*;
 
 
 public class CopyTableExtract {
+Error	Error: Compile Error: Invalid type: Schema.CaseActions at line 5 column 16	
 
 
-
+public with sharing class CaseHistoryController {
+    @AuraEnabled(cacheable=true)
+    public static List<Case_Actions__c> getCaseRecords() {
+      
+        return [SELECT Date_Time_c__c,PlanID__c FROM CaseActions LIMIT 10];
+    }
+}
 	
 	
 	 public static void main(String[] args) {
