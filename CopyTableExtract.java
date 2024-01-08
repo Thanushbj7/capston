@@ -132,219 +132,40 @@ int runCycleCount=zipFileNameCount.get(zipFileName);
 
 	                // Write the workbook to a file
 	                try (FileOutputStream fileOut = new FileOutputStream(excelFilePath)) {
-	                    workbook.write(fileOut);
-	                    System.out.println("Excel file created successfully at: " + excelFilePath);
-	                }
+import java.io.*;
+import java.nio.file.*;
 
-	            } catch (IOException e) {
-	                e.printStackTrace();
-	            }
-	        } else {
-	            System.out.println("No zip files found in the specified folder.");
-	        }
-	    }
-private static Date extractEndDate(File logFile,Sheet sheet,int rowNum){
-	try(RandomAccessFile randomAccessFile=new RandomAccessFile(logFile,"r")){
-		long length=randomAccessFile.length();
-		if(length==0){
-			return null;
-		}
-		long position=length-1;
-		randomAccessFile.seek(position);
-		while(position > 0 && randomAccessFile.readByte() !='\n'){
-			position--;
-			randomAccessFile.seek(position);
-		}
-			byte[] bytes=new byte[(int) (length-position)];
-			randomAccessFile.read(bytes);
-			String lastLine=new String(bytes).trim();
-			if(!lastLine.isEmpty()){
-			SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			try{
-				Date endDate=dateFormat.parse(lastLine);
-				int recordCount=extractRecordCount(lastLine);
-				Row row=sheet.getRow(rowNum);
-				Cell endDateCell=row.createCell(6);
-				endDateCell.setCellValue(endDate);
-				Cell recordCountCell=row.createCell(4);
-				recordCountCell.setCellValue(recordCount);
-				return endDate;
-			}catch(ParseException e){
-				System.out.println("Error parsing end date from log file:"+logFile.getName());
-				e.printStackTrace();
-			}
-		}
-	}catch(IOException e){
-			e.printStackTrace();
-		}
-		return null;
-	
+public class LogProcessor {
+
+    private static final String OUTPUT_FILE_PATH = "output.txt"; // Specify the path for the output file
+
+    public static void main(String[] args) {
+        File logFile = new File("your_log_file_path.txt"); // Replace with the actual path to your log file
+        processLogFile(logFile);
+    }
+
+    private static void processLogFile(File logFile) {
+        try {
+            PrintStream console = System.out; // Store the reference to the console
+            FileOutputStream fileOutputStream = new FileOutputStream(OUTPUT_FILE_PATH);
+            PrintStream filePrintStream = new PrintStream(fileOutputStream);
+
+            // Redirect System.out to the file
+            System.setOut(filePrintStream);
+
+            readLogFile(logFile);
+
+            // Restore the original System.out
+            System.setOut(console);
+
+            System.out.println("Log data has been written to " + OUTPUT_FILE_PATH);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // ... (rest of your code remains unchanged)
 }
-private static int extractRecordCount(String lastLine){
-	String[] parts=lastLine.split("\\D+");
-	if(parts.length>0){
-		return Integer.parseInt(parts[parts.length-1]);
-	}else{
-		return 0;
-	}
-}
-	    private static void readLogFile(File logFile) {
-	        // Read and process the log file as needed
-	        try (BufferedReader reader = new BufferedReader(new FileReader(logFile))) {
-	            String line;
-	            while ((line = reader.readLine()) != null) {
-	                // Process each line of the log file
-	                System.out.println(line);
-	            }
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }
-	    }
-	    private static Date extractDateFromLogFile(File logFile) {
-	        // Read and process the first line of the log file to extract date and time
-	        try (BufferedReader reader = new BufferedReader(new FileReader(logFile))) {
-	            String firstLine = reader.readLine();
-	            if (firstLine != null) {
-	                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	                try {
-	                    return dateFormat.parse(firstLine);
-	                } catch (ParseException e) {
-	                    System.out.println("Error parsing date from log file: " + logFile.getName());
-	                    e.printStackTrace();
-	                }
-	            }
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }
-	        return null;
-	    }
-	    private static Date extractStartDate(File logFile) {
-	        // Read and process the lines of the log file to extract date and time from the line containing "Decrypting..."
-	        try (BufferedReader reader = new BufferedReader(new FileReader(logFile))) {
-	            String line;
-	            boolean decryptingFound=false;
-	            while ((line = reader.readLine()) != null) {
-	                if (decryptingFound) {
-	                	//if(line.length()>=32){
-	                		//String dateString=line.substring(0, 13).trim();
-	                	//}
-	                    // Extract date and time from the line
-	                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); // Adjust the format based on your log
-	                    try {
-	                        // Assuming the date and time start at index 13 and end at index 32
-	                        return dateFormat.parse(line.trim());
-	                    } catch (ParseException e) {
-	                        System.out.println("Error parsing start date from log file: " + logFile.getName());
-	                        e.printStackTrace();
-	                    }
-	                }
-	                if (line.contains("Decrypting...")){
-	                	decryptingFound=true;
-	                }
-	            }
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }
-	        return null;
-	    }private static String mapWeeklyDaily(String logFileName) {
-	        // Map "W" to WEEKLY_DAILY if the logfile name contains certain strings, otherwise map as "D"
-	        if (logFileName.toLowerCase().contains("sfdcfinancialaccountextractprocess") ||
-	            logFileName.toLowerCase().contains("sfdcfinancialaccountteamextractprocess")) {
-	            return "W";
-	        } else {
-	            return "D";
-	        }
-	    }
-	    private static String mapTableName(String fileName) {
-	        // Map the table name based on the file name
-	    	if (fileName.toLowerCase().contains("sfdcregistrationmapextractprocess")) {
-	            return "SFDC_W_TR_REGISTRATION_MAP";
-	        }else if (fileName.contains("sfdcSbrLetterLogRelExtractProcess")) {
-	            return "SBR_W_REG_LETTER_LOG_REL_SFDC";
-	        }else if (fileName.contains("sfdcSponserNamesExtractProcess")) {
-	            return "SFDC_W_SPONSOR_NAMES";
-	        }else if (fileName.contains("sfdcClientExtractProcess")) {
-	            return "SFDC_W_CLIENT";
-	        }else if (fileName.contains("sfdcRegistrationExtractProcess")) {
-	            return "SFDC_W_REGISTRATION";
-	        }else if (fileName.contains("oracleEblotterExtractProcess")) {
-	            return "SFDC_EBLOTTER";
-	        }else if (fileName.contains("sfdcEBlottereBlotterExtractProcess")) {
-	            return "SFDC_EBLOTTER";
-	        }else if (fileName.contains("sfdcRegMemberExtractProcess")) {
-	            return "SFDC_W_REGISTRATION_MEMBERS";
-	        }else if (fileName.contains("sfdcRegBeneficiaryExtractProcess")) {
-	            return "SFDC_W_BENEFICIARY";
-	        }else if (fileName.contains("sfdcClientDisclosureExtractProcess")) {
-	            return "SFDC_W_CLIENT_DISCLOSURE";
-	        }else if (fileName.contains("sfdcPortfolioReviewExtractProcess")) {
-	            return "SFDC_W_PORTFOLIO_REVIEW";
-	        }else if (fileName.contains("SFDCHistoryAccountHistoryExtract")) {
-	            return "SBR_ACCOUNT_HISTORY_SFDC";
-	        }else if (fileName.contains("SFDCHistoryRegClientmemberHistoryExtract")) {
-	            return "SBR_REG_MEMBER_HISTORY_SFDC";
-	        }else if (fileName.contains("SFDCHistoryRegistrationHistoryExtract")) {
-	            return "SBR_REGISTRATION_HISTORY_SFDC";
-	        }else if (fileName.contains("SFDCHistoryRegistrationLogExtract")) {
-	            return "SBR_REG_LETTER_LOG_SFDC";
-	        }else if (fileName.contains("SFDCHistoryRegistrationLogtable_T2_Extract")) {
-	            return "SBR_REG_LETTER_LOG_T2_SFDC";
-	        }else if (fileName.contains("sfdcEBlotterChecksExtractProcess")) {
-	            return "SFDC_CHECKS";
-	        }else if (fileName.contains("sfdcEBlotterTradesExtractProcess")) {
-	            return "SFDC_TRADES";
-	        }else if (fileName.toLowerCase().contains("sfdc_emailload_log")) {
-	            return "SFDC_USER";
-	        }else if (fileName.contains("sfdcFinancialAccountExtractProcess")) {
-	            return "SFDC_W_FINANCIAL_ACCOUNT";
-	        }else if (fileName.contains("sfdcFinancialAccountTeamExtractProcess")) {
-	            return "SFDC_W_FINANCIAL_ACCOUNT_TEAM";
-	        }
-	        // Add more conditions if needed for other file names
-	        // Example: if (fileName.contains("someOtherPattern")) return "SomeOtherTable";
-
-	        // Default to an empty string if no mapping is found
-	        return "";
-	    }
-
-	    private static void addLogDataToExcel(Sheet sheet, int rowNum, Date runDate, String tableName,Date startDate,Date endDate,String weeklyDaily) {
-	        Row row = sheet.createRow(rowNum);
-
-	        // Add the extracted run date to the RUN_DATE column
-	        Cell cellRunDate = row.createCell(0);
-	        if (runDate != null) {
-	            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	            cellRunDate.setCellValue(dateFormat.format(runDate));
-	       
-	        }
-	       // Row row=sheet.getRow(rowNum);
-	       // Cell cellLastLine=row.createCell(4);
-	       // if(recordCount!=null){
-	        //	cellLatLine.setCellValue(recordCount);
-	       // }
-	        
-
-	        // Add the mapped table name to the TABLE_NAME column
-	        Cell cellTableName = row.createCell(2);
-	        cellTableName.setCellValue(tableName);
-	        Cell cellStartDate=row.createCell(5);
-	        Cell cellWeeklyDaily=row.createCell(3);
-	        cellWeeklyDaily.setCellValue(weeklyDaily);
-	        if(startDate!=null){
-	        	SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	        	
-	        	cellStartDate.setCellValue(dateFormat.format(startDate));
-	        }
-	        Cell cellEndDate=row.createCell(6);
-	         if(endDate!=null){
-	        	SimpleDateFormat dateFormate=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	        	cellEndDate.setCellValue(dateFormate.format(endDate));
-	        }
-	    }
-	}
-
-	
-
 
 	
 	    
