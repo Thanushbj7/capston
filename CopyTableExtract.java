@@ -54,3 +54,18 @@
         console.log("error Occurred!", error);
     }
 }
+
+
+
+
+
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+            <version>2.6</version>
+        </plugin>
+        <!-- Other plugins may follow here -->
+    </plugins>
+</build>
