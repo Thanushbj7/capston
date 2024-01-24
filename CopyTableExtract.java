@@ -87,3 +87,45 @@ const columns = [
 		 { label: 'Forms', fieldName: 'Call_Type__c'},
 		{ label: 'Others', fieldName: 'Call_Type__c'},
 ];
+
+
+
+import { LightningElement, api, track, wire } from 'lwc';
+import { publish, MessageContext } from 'lightning/messageService';
+import EXAMPLE_MESSAGE_CHANNEL from '@salesforce/messageChannel/ExampleMessageChannel__c';
+import getObject from '@salesforce/apex/CaseRelatedListApex.getObject';
+
+const columns = [
+    { label: 'Case Number', fieldName: 'CaseNumber' },
+    { label: 'Date', fieldName: 'CreatedDate' },
+    { label: 'Plan Id', fieldName: 'PlanID_Text__c' },
+    { label: 'Inquiry', fieldName: 'Inquiry' },
+    { label: 'Transactions', fieldName: 'Transactions' },
+    { label: 'Account Maintenance', fieldName: 'AccountMaintenance' },
+    { label: 'Forms', fieldName: 'Forms' },
+    { label: 'Others', fieldName: 'Others' },
+];
+
+export default class YourLWC extends LightningElement {
+    @track data = [];
+
+    @wire(getObject)
+    wiredData({ error, data }) {
+        if (data) {
+            // Transform the data structure to align with the datatable
+            this.data = Object.keys(data).map(caseNumber => {
+                const caseActionsMap = data[caseNumber];
+                return {
+                    CaseNumber: caseNumber,
+                    CreatedDate: caseActionsMap['CreatedDate'][0], // Assuming the CreatedDate is the same for all actions
+                    PlanID_Text__c: caseActionsMap['PlanID_Text__c'][0], // Assuming the PlanID_Text__c is the same for all actions
+                    Inquiry: caseActionsMap['Inquiry'].join('\n'),
+                    Transactions: caseActionsMap['Transactions'].join('\n'),
+                    AccountMaintenance: caseActionsMap['AccountMaintenance'].join('\n'),
+                    Forms: caseActionsMap['Forms'].join('\n'),
+                    Others: caseActionsMap['Others'].join('\n'),
+                };
+            });
+        }
+    }
+	}
