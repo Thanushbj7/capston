@@ -1,3 +1,71 @@
+import { LightningElement, wire } from 'lwc';
+import { publish, MessageContext } from 'lightning/messageService';
+import EXAMPLE_MESSAGE_CHANNEL from '@salesforce/messageChannel/ExampleMessageChannel__c';
+import getObject from '@salesforce/apex/CaseRelatedListApex.getObject';
+
+const columns = [
+    { label: 'Case Number', fieldName: 'CaseNumber' },
+    { label: 'Date', fieldName: 'CreatedDate' },
+    { label: 'Plan Id', fieldName: 'PlanID_Text__c' },
+    { label: 'Inquiry', fieldName: 'Call_Type__c' },
+    { label: 'Transactions', fieldName: 'Call_Type__c' },
+    { label: 'Account Maintenance', fieldName: 'Call_Type__c' },
+    { label: 'Forms', fieldName: 'Call_Type__c' },
+    { label: 'Others', fieldName: 'Call_Type__c' },
+];
+
+export default class CaseHistoryLWC extends LightningElement {
+    hardcodedCaseNumber = 'ABC123';
+
+    @wire(MessageContext)
+    messageContext;
+
+    @track data = [];
+    @track columns = columns;
+    wiredRecords;
+
+    @wire(getObject) wiredCases(value) {
+        this.wiredRecords = value;
+        const { data, error } = value;
+
+        if (data) {
+            let tempRecords = JSON.parse(JSON.stringify(data));
+
+            // Use a Set to store unique Plan Ids
+            let uniquePlanIds = new Set();
+
+            // Iterate through records and set CaseNumber only once
+            tempRecords.forEach((row, index) => {
+                if (!uniquePlanIds.has(row.PlanID_Text__c)) {
+                    row.CaseNumber = this.hardcodedCaseNumber;
+                    uniquePlanIds.add(row.PlanID_Text__c);
+                } else {
+                    // Clear CaseNumber for subsequent records
+                    tempRecords[index].CaseNumber = null;
+                }
+            });
+
+            this.data = tempRecords;
+            console.log("tempRecords!", tempRecords);
+        }
+
+        if (error) {
+            console.log("error Occurred!", error);
+        }
+    }
+
+    // Rest of your code remains unchanged
+    // connectedCallback, sendMessage, etc.
+}
+
+
+
+
+
+
+
+
+
 
 import { LightningElement, api, track, wire } from 'lwc';
 import { publish, MessageContext } from 'lightning/messageService';
