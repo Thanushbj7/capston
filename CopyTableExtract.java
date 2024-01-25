@@ -41,6 +41,79 @@ export default class CaseHistoryLWC extends LightningElement {
                 
                 // Update the Call_Type__c value for the current row
                 row.Call_Type__c = uniqueCallTypesMap.get(key);
+
+                // Make other Call_Type__c columns empty for all rows except the one with a unique Call_Type__c
+                row.Inquiry_Call_Type__c = row.Call_Type__c !== row.Inquiry_Call_Type__c ? null : row.Inquiry_Call_Type__c;
+                row.Transactions_Call_Type__c = row.Call_Type__c !== row.Transactions_Call_Type__c ? null : row.Transactions_Call_Type__c;
+                row.Account_Maintenance_Call_Type__c = row.Call_Type__c !== row.Account_Maintenance_Call_Type__c ? null : row.Account_Maintenance_Call_Type__c;
+                row.Forms_Call_Type__c = row.Call_Type__c !== row.Forms_Call_Type__c ? null : row.Forms_Call_Type__c;
+                row.Others_Call_Type__c = row.Call_Type__c !== row.Others_Call_Type__c ? null : row.Others_Call_Type__c;
+
+                return row;
+            });
+
+            this.data = tempRecords;
+            console.log("tempRecords!", tempRecords);
+        }
+
+        if (error) {
+            console.log("error Occurred!", error);
+        }
+    }
+
+    // Rest of your code remains unchanged
+    // connectedCallback, sendMessage, etc.
+                    }
+
+
+
+
+
+
+
+import { LightningElement, wire } from 'lwc';
+import { publish, MessageContext } from 'lightning/messageService';
+import EXAMPLE_MESSAGE_CHANNEL from '@salesforce/messageChannel/ExampleMessageChannel__c';
+import getObject from '@salesforce/apex/CaseRelatedListApex.getObject';
+
+const columns = [
+    { label: 'Case Number', fieldName: 'CaseNumber' },
+    { label: 'Date', fieldName: 'CreatedDate' },
+    { label: 'Plan Id', fieldName: 'PlanID_Text__c' },
+    { label: 'Inquiry', fieldName: 'Inquiry_Call_Type__c' },
+    { label: 'Transactions', fieldName: 'Transactions_Call_Type__c' },
+    { label: 'Account Maintenance', fieldName: 'Account_Maintenance_Call_Type__c' },
+    { label: 'Forms', fieldName: 'Forms_Call_Type__c' },
+    { label: 'Others', fieldName: 'Others_Call_Type__c' },
+];
+
+export default class CaseHistoryLWC extends LightningElement {
+    @wire(MessageContext)
+    messageContext;
+
+    @track data = [];
+    @track columns = columns;
+    wiredRecords;
+
+    @wire(getObject) wiredCases(value) {
+        this.wiredRecords = value;
+        const { data, error } = value;
+
+        if (data) {
+            let uniqueCallTypesMap = new Map();
+
+            // Modify Call_Type__c values to ensure uniqueness for each row
+            let tempRecords = data.map(row => {
+                // Generate a unique key based on Case Number and Plan Id
+                const key = `${row.CaseNumber}-${row.PlanID_Text__c}`;
+                
+                // If the key is not present in the map, set the Call_Type__c and add to the map
+                if (!uniqueCallTypesMap.has(key)) {
+                    uniqueCallTypesMap.set(key, row.Call_Type__c);
+                }
+                
+                // Update the Call_Type__c value for the current row
+                row.Call_Type__c = uniqueCallTypesMap.get(key);
                 
                 return row;
             });
