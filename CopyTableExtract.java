@@ -30,6 +30,71 @@ export default class CaseHistoryLWC extends LightningElement {
             let uniqueCaseNumbers = new Set();
             let uniquePlanIds = new Set();
 
+            // Modify Case Number, Plan Id, and ensure unique Call_Type__c for each row
+            let tempRecords = data.map(row => {
+                if (!uniqueCaseNumbers.has(row.CaseNumber) && !uniquePlanIds.has(row.PlanID_Text__c)) {
+                    uniqueCaseNumbers.add(row.CaseNumber);
+                    uniquePlanIds.add(row.PlanID_Text__c);
+                    return row;
+                }
+                // If duplicate Case Number or Plan Id, return a new object with blank Case Number, Plan Id, and Call_Type__c
+                return { ...row, CaseNumber: null, PlanID_Text__c: null, Call_Type__c: null };
+            });
+
+            this.data = tempRecords;
+            console.log("tempRecords!", tempRecords);
+        }
+
+        if (error) {
+            console.log("error Occurred!", error);
+        }
+    }
+
+    // Rest of your code remains unchanged
+    // connectedCallback, sendMessage, etc.
+}
+
+
+
+
+
+
+
+
+
+
+import { LightningElement, wire } from 'lwc';
+import { publish, MessageContext } from 'lightning/messageService';
+import EXAMPLE_MESSAGE_CHANNEL from '@salesforce/messageChannel/ExampleMessageChannel__c';
+import getObject from '@salesforce/apex/CaseRelatedListApex.getObject';
+
+const columns = [
+    { label: 'Case Number', fieldName: 'CaseNumber' },
+    { label: 'Date', fieldName: 'CreatedDate' },
+    { label: 'Plan Id', fieldName: 'PlanID_Text__c' },
+    { label: 'Inquiry', fieldName: 'Call_Type__c' },
+    { label: 'Transactions', fieldName: 'Call_Type__c' },
+    { label: 'Account Maintenance', fieldName: 'Call_Type__c' },
+    { label: 'Forms', fieldName: 'Call_Type__c' },
+    { label: 'Others', fieldName: 'Call_Type__c' },
+];
+
+export default class CaseHistoryLWC extends LightningElement {
+    @wire(MessageContext)
+    messageContext;
+
+    @track data = [];
+    @track columns = columns;
+    wiredRecords;
+
+    @wire(getObject) wiredCases(value) {
+        this.wiredRecords = value;
+        const { data, error } = value;
+
+        if (data) {
+            let uniqueCaseNumbers = new Set();
+            let uniquePlanIds = new Set();
+
             // Modify Case Number and Plan Id, keep other column values as usual
             let tempRecords = data.map(row => {
                 if (!uniqueCaseNumbers.has(row.CaseNumber)) {
