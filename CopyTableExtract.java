@@ -31,6 +31,69 @@ export default class CaseHistoryLWC extends LightningElement {
         if (data) {
             let uniquePlanIds = new Set();
 
+            // Modify only Plan Id and keep other column values as usual
+            let tempRecords = data.map(row => {
+                if (!uniquePlanIds.has(row.PlanID_Text__c)) {
+                    uniquePlanIds.add(row.PlanID_Text__c);
+                    row.CaseNumber = this.hardcodedCaseNumber;
+                    return row;
+                }
+                // If duplicate Plan Id, return a new object with blank Plan Id
+                return { ...row, PlanID_Text__c: null };
+            });
+
+            this.data = tempRecords;
+            console.log("tempRecords!", tempRecords);
+        }
+
+        if (error) {
+            console.log("error Occurred!", error);
+        }
+    }
+
+    // Rest of your code remains unchanged
+    // connectedCallback, sendMessage, etc.
+}
+
+
+
+
+
+
+
+import { LightningElement, wire } from 'lwc';
+import { publish, MessageContext } from 'lightning/messageService';
+import EXAMPLE_MESSAGE_CHANNEL from '@salesforce/messageChannel/ExampleMessageChannel__c';
+import getObject from '@salesforce/apex/CaseRelatedListApex.getObject';
+
+const columns = [
+    { label: 'Case Number', fieldName: 'CaseNumber' },
+    { label: 'Date', fieldName: 'CreatedDate' },
+    { label: 'Plan Id', fieldName: 'PlanID_Text__c' },
+    { label: 'Inquiry', fieldName: 'Call_Type__c' },
+    { label: 'Transactions', fieldName: 'Call_Type__c' },
+    { label: 'Account Maintenance', fieldName: 'Call_Type__c' },
+    { label: 'Forms', fieldName: 'Call_Type__c' },
+    { label: 'Others', fieldName: 'Call_Type__c' },
+];
+
+export default class CaseHistoryLWC extends LightningElement {
+    hardcodedCaseNumber = 'ABC123';
+
+    @wire(MessageContext)
+    messageContext;
+
+    @track data = [];
+    @track columns = columns;
+    wiredRecords;
+
+    @wire(getObject) wiredCases(value) {
+        this.wiredRecords = value;
+        const { data, error } = value;
+
+        if (data) {
+            let uniquePlanIds = new Set();
+
             // Filter out records with duplicate Plan Ids
             let tempRecords = data.filter(row => {
                 if (!uniquePlanIds.has(row.PlanID_Text__c)) {
