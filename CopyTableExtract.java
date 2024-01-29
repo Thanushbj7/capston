@@ -4,6 +4,59 @@ tempRecords = tempRecords.map(row => {
     if (!uniquePlanIds.has(row.PlanID_Text__c)) {
         uniquePlanIds.add(row.PlanID_Text__c);
 
+        let Inquiry = false;
+        let Transaction = false;
+
+        switch (row.Call_Type__c) {
+            case 'enquiry':
+                Inquiry = true;
+                break;
+            case 'transaction':
+                Transaction = true;
+                break;
+            // Add more cases as needed for other values
+
+            // Default case handles other scenarios
+            default:
+                break;
+        }
+
+        return {
+            ...row,
+            CaseNumber: row.Case__r.CaseNumber,
+            CreatedDate: row.Case__r.CreatedDate,
+            Inquiry,
+            Transaction,
+            // Add more conditions as needed for other values
+        };
+    }
+
+    return {
+        ...row,
+        PlanID_Text__c: null,
+        Inquiry: false, // Set default values if needed
+        Transaction: false, // Set default values if needed
+        // Add more conditions as needed for other values
+    };
+});
+
+// ... (rest of your existing code)
+
+
+
+
+
+
+
+
+
+
+// ... (your existing code)
+
+tempRecords = tempRecords.map(row => {
+    if (!uniquePlanIds.has(row.PlanID_Text__c)) {
+        uniquePlanIds.add(row.PlanID_Text__c);
+
         if (row.Call_Type__c === 'enquiry') {
             return {
                 ...row,
