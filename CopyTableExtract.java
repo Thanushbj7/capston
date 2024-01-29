@@ -1,3 +1,39 @@
+// ... (your existing code)
+
+tempRecords = tempRecords.map(row => {
+    if (!uniquePlanIds.has(row.PlanID_Text__c)) {
+        uniquePlanIds.add(row.PlanID_Text__c);
+
+        return {
+            ...row,
+            CaseNumber: row.Case__r.CaseNumber,
+            CreatedDate: row.Case__r.CreatedDate,
+            Inquiry: row.Call_Type__c === 'enquiry',
+            Transaction: row.Call_Type__c === 'transaction',
+            // Add more conditions as needed for other values
+        };
+    }
+
+    return {
+        ...row,
+        PlanID_Text__c: null,
+        Inquiry: false, // Set default values if needed
+        Transaction: false, // Set default values if needed
+        // Add more conditions as needed for other values
+    };
+});
+
+// ... (rest of your existing code)
+
+
+
+
+
+
+
+
+
+
 import { LightningElement, api, track, wire } from 'lwc';
 import { publish, MessageContext } from 'lightning/messageService';
 import EXAMPLE_MESSAGE_CHANNEL from '@salesforce/messageChannel/ExampleMessageChannel__c';
