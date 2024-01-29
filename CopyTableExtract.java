@@ -17,3 +17,46 @@
 		</div>
 		 
 </template>
+
+
+
+
+
+				  <div style="height: 300px;">
+    <h2>
+        <span>
+            <img src="path/to/your/icon.png" alt="Case History Icon" width="24" height="24">
+        </span>
+        <b>Case History</b>
+    </h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Case Number</th>
+                <th>Date</th>
+                <th>Plan Id</th>
+                <th>Inquiry</th>
+                <th>Transactions</th>
+                <th>Account Maintenance</th>
+                <th>Forms</th>
+                <th>Others</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Loop through data to generate rows -->
+            <template for:each={data} for:item="record" for:index="index">
+                <tr key={record.Id}>
+                    <td>{record.CaseNumber}</td>
+                    <td>{record.CreatedDate}</td>
+                    <td>{record.PlanID_Text__c}</td>
+                    <td>{record.Inquiry}</td>
+                    <td>{record.Transactions}</td>
+                    <td>{record.AccountMaintenance}</td>
+                    <td>{record.Forms}</td>
+                    <td>{record.Others}</td>
+                </tr>
+            </template>
+        </tbody>
+    </table>
+</div>
