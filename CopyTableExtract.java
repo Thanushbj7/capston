@@ -4,6 +4,64 @@ tempRecords = tempRecords.map(row => {
     if (!uniquePlanIds.has(row.PlanID_Text__c)) {
         uniquePlanIds.add(row.PlanID_Text__c);
 
+        if (row.Call_Type__c === 'enquiry') {
+            return {
+                ...row,
+                CaseNumber: row.Case__r.CaseNumber,
+                CreatedDate: row.Case__r.CreatedDate,
+                Inquiry: true,
+                Transaction: false,
+                // Add more conditions as needed for other values
+            };
+        } else if (row.Call_Type__c === 'transaction') {
+            return {
+                ...row,
+                CaseNumber: row.Case__r.CaseNumber,
+                CreatedDate: row.Case__r.CreatedDate,
+                Inquiry: false,
+                Transaction: true,
+                // Add more conditions as needed for other values
+            };
+        } else {
+            // Handle other cases here if needed
+            return {
+                ...row,
+                CaseNumber: row.Case__r.CaseNumber,
+                CreatedDate: row.Case__r.CreatedDate,
+                Inquiry: false,
+                Transaction: false,
+                // Add more conditions as needed for other values
+            };
+        }
+    }
+
+    return {
+        ...row,
+        PlanID_Text__c: null,
+        Inquiry: false, // Set default values if needed
+        Transaction: false, // Set default values if needed
+        // Add more conditions as needed for other values
+    };
+});
+
+// ... (rest of your existing code)
+
+
+
+
+
+
+
+
+
+
+
+// ... (your existing code)
+
+tempRecords = tempRecords.map(row => {
+    if (!uniquePlanIds.has(row.PlanID_Text__c)) {
+        uniquePlanIds.add(row.PlanID_Text__c);
+
         return {
             ...row,
             CaseNumber: row.Case__r.CaseNumber,
