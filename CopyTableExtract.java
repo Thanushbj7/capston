@@ -108,3 +108,26 @@
         </table>
     </div>
 </template>
+
+
+
+<template>
+    <div class="slds-box slds-theme_default" style="height: 300px;">
+        <header class="slds-box_header slds-p-around_small slds-theme_default">
+            <h2 class="slds-text-heading_medium">
+                <lightning-icon icon-name="action:new_note" title="Case History" size="medium"></lightning-icon>
+                <b>Case History</b>
+            </h2>
+        </header>
+
+        <div class="slds-scrollable_x">
+            <lightning-datatable
+                key-field="Id"
+                data={data}
+                columns={columns}
+                hide-checkbox-column
+            ></lightning-datatable>
+        </div>
+    </div>
+</template>
+				  
