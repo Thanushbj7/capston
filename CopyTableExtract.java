@@ -1,4 +1,74 @@
- [Cannot read properties of undefined (reading 'Id')]
+// ... (your existing code)
+
+tempRecords = tempRecords.map(row => {
+    if (!uniquePlanIds.has(row.PlanID_Text__c)) {
+        uniquePlanIds.add(row.PlanID_Text__c);
+
+        let Inquiry = false;
+        let Transaction = false;
+        let AccountMaintenance = false;
+        let Forms = false;
+        let Others = false;
+
+        switch (row.Call_Activity) {
+            case 'inquiry':
+                Inquiry = true;
+                break;
+            case 'transaction':
+                Transaction = true;
+                break;
+            case 'account maintenance':
+                AccountMaintenance = true;
+                break;
+            case 'forms':
+                Forms = true;
+                break;
+            case 'others':
+                Others = true;
+                break;
+            // Add more cases as needed for other values
+
+            // Default case handles other scenarios
+            default:
+                break;
+        }
+
+        return {
+            ...row,
+            CaseNumber: row.Case__r.CaseNumber,
+            CreatedDate: row.Case__r.CreatedDate,
+            Inquiry,
+            Transaction,
+            AccountMaintenance,
+            Forms,
+            Others
+            // Set other columns to empty or default values if needed
+        };
+    }
+
+    return {
+        ...row,
+        PlanID_Text__c: null,
+        Inquiry: false,
+        Transaction: false,
+        AccountMaintenance: false,
+        Forms: false,
+        Others: false
+        // Set other columns to empty or default values if needed
+    };
+});
+
+// ... (rest of your existing code)
+
+
+
+
+
+
+
+
+
+[Cannot read properties of undefined (reading 'Id')]
 
 
 
