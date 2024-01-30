@@ -1,3 +1,7 @@
+ [Cannot read properties of undefined (reading 'Id')]
+
+
+
 // ... (your existing code)
 
 tempRecords = tempRecords.map(row => {
