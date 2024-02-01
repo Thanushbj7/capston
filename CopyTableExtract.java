@@ -4,6 +4,38 @@
     if (data) {
         let tempRecords = JSON.parse(JSON.stringify(data));
 
+        tempRecords = tempRecords.map(row => {
+            let uniqueValues = new Set();
+            Object.keys(row).forEach(key => {
+                if (!uniqueValues.has(row[key])) {
+                    uniqueValues.add(row[key]);
+                } else {
+                    row[key] = null; // Set duplicate values to null
+                }
+            });
+            return row;
+        });
+
+        this.data = tempRecords;
+        console.log("tempRecords!", tempRecords);
+    }
+
+    // existing code...
+}
+
+
+
+
+
+
+
+
+@wire(getObject) wiredCases(value) {
+    // existing code...
+
+    if (data) {
+        let tempRecords = JSON.parse(JSON.stringify(data));
+
         let uniqueRows = new Set();
 
         tempRecords = tempRecords.filter(row => {
