@@ -1,3 +1,37 @@
+const columns = [
+    { label: 'Case Number', fieldName: 'CaseNumber' },
+    { label: 'Date', fieldName: 'CreatedDate' },
+    { label: 'Plan Id', fieldName: 'PlanID_Text__c' },
+    { label: 'Inquiry', fieldName: 'Call_Type__c' },
+    { label: 'Transactions', fieldName: 'Call_Type__c' },
+    { label: 'Account Maintenance', fieldName: 'Call_Type__c' },
+    { label: 'Forms', fieldName: 'Call_Type__c' },
+    { label: 'Others', fieldName: 'Call_Type__c' },
+];
+
+const uniqueColumnsSet = new Set();
+
+const filteredColumns = columns.filter(column => {
+    if (!uniqueColumnsSet.has(column.fieldName)) {
+        uniqueColumnsSet.add(column.fieldName);
+        return true;
+    }
+    return false;
+});
+
+export default class CaseHistoryLWC extends LightningElement {
+    // ... rest of your component code
+    @track columns = filteredColumns;
+    // ... rest of your component code
+}
+
+
+
+
+
+
+
+
 @wire(getObject) wiredCases(value) {
     // existing code...
 
