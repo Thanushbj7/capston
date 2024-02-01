@@ -1,3 +1,33 @@
+tempRecords = tempRecords.map(row => {
+    let uniqueValues = new Set();
+
+    // Iterate through each property of the row
+    Object.keys(row).forEach(key => {
+        const value = row[key];
+
+        // Check if the value is unique for each property
+        if (!uniqueValues.has(value)) {
+            uniqueValues.add(value);
+        } else {
+            row[key] = null; // Set duplicate values to null
+        }
+    });
+
+    return row;
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
 const columns = [
     { label: 'Case Number', fieldName: 'CaseNumber' },
     { label: 'Date', fieldName: 'CreatedDate' },
