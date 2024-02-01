@@ -1,3 +1,37 @@
+@wire(getObject) wiredCases(value) {
+    // existing code...
+
+    if (data) {
+        let tempRecords = JSON.parse(JSON.stringify(data));
+
+        let uniqueRows = new Set();
+
+        tempRecords = tempRecords.filter(row => {
+            const rowKey = Object.values(row).join('-'); // Concatenate all values into a unique key
+            if (!uniqueRows.has(rowKey)) {
+                uniqueRows.add(rowKey);
+                return true; // Include unique rows
+            }
+            return false; // Skip duplicate rows
+        });
+
+        this.data = tempRecords;
+        console.log("tempRecords!", tempRecords);
+    }
+
+    // existing code...
+}
+
+
+
+
+
+
+
+
+
+
+
 import { LightningElement, api, track, wire } from 'lwc';
 import { publish, MessageContext } from 'lightning/messageService';
 import EXAMPLE_MESSAGE_CHANNEL from '@salesforce/messageChannel/ExampleMessageChannel__c';
