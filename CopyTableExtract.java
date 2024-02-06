@@ -1,3 +1,177 @@
+import { LightningElement, api, track, wire } from 'lwc';
+import { publish, MessageContext } from 'lightning/messageService';
+import EXAMPLE_MESSAGE_CHANNEL from '@salesforce/messageChannel/ExampleMessageChannel__c';
+import fetchWrapperCases from '@salesforce/apex/CaseRelatedListApex.fetchWrapperCases';
+
+const columns = [
+    { label: 'Case Number', fieldName: 'caseNumber' },
+    { label: 'Date', fieldName: 'createdDate' },
+    { label: 'Plan Id', fieldName: 'planId' },
+    { label: 'Inquiry', fieldName: 'callTypeInquiry', columnKey: 'inq' },
+    { label: 'Transactions', fieldName: 'callTypeTransaction', columnKey: 'tra' },
+    { label: 'Account Maintenance', fieldName: 'callTypeAccountMaintenance', columnKey: 'accM' },
+    { label: 'Forms', fieldName: 'callTypeForms', columnKey: 'for' },
+    { label: 'Others', fieldName: 'callTypeOthers', columnKey: 'oth' },
+];
+
+export default class CaseHistoryLWC extends LightningElement {
+    @track data = [];
+    @track columns = columns;
+
+    wiredRecords;
+
+
+    connectedCallback() {
+            // Parse the URL and get the 'passedValue' parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            this.clientSSN = urlParams.get('clientSSN');
+            console.log('ssn should appear here' + this.clientSSN);
+            console.log('inside connected callback');
+        }
+        //{SSN:this.clientSSN}
+
+    @wire(fetchWrapperCases) wiredCases(value) {
+        //console.log("Columns stringified 1st  --" , this.columns);
+        this.wiredRecords = value;
+        const { data, error } = value;
+        if (data) {
+
+            let tempRecords = JSON.parse(JSON.stringify(data));
+            let uniqueCaseNumbers = new Set();
+
+            let uniqueCallTypesMap = new Map();
+
+
+
+            /*	tempRecords = tempRecords.map(row => {
+								if (!uniquePlanIds.has(row.planId)) {
+										uniquePlanIds.add(row.planId);
+
+										return {...row , caseNumber:row.caseNumber , createdDate:row.createdDate };
+               //
+										//console.log("temprecords inside -", tempRecords);
+								}		return { ...row,planId: null};
+						});*/
+            /*	tempRecords = tempRecords.map(row => {	
+						if (!uniqueCaseNumbers.has(row.caseNumber)) {
+										uniqueCaseNumbers.add(row.caseNumber);
+
+										return {...row};
+               //caseNumber:row.caseNumber , createdDate:row.createdDate
+										//console.log("temprecords inside -", tempRecords);
+								}		return { ...row,};//caseNumber: null
+						});
+						console.log("uniqueCaseNumbers -", uniqueCaseNumbers);
+
+						for(var i of uniqueCaseNumbers) {
+						tempRecords = tempRecords.map(row => {
+							if(row.caseNumber === i){
+								if (!uniquePlanIds.has(row.planId)) {
+										uniquePlanIds.add(row.planId);
+										return {...row , caseNumber:row.caseNumber , createdDate:row.createdDate };
+               //
+										//console.log("temprecords inside -", tempRecords);
+								}		return { ...row,planId: null};
+						}
+						});
+				}*/
+
+            function groupBy(objectArray, property) {
+                return objectArray.reduce(function(acc, obj) {
+                    var key = obj[property];
+                    if (!acc[key]) {
+                        acc[key] = [];
+                    }
+                    acc[key].push(obj);
+                    return acc;
+                }, {});
+            }
+            var groupedPlanIds;
+            var groupedCaseNumbers = groupBy(tempRecords, 'caseNumber');
+            let final = [];
+            for (let i in groupedCaseNumbers) {
+                //	console.log("groupedCaseNumbers!" , groupedCaseNumbers[i]);
+
+
+                //	console.log("groupedCaseNumbers[i]--" , groupedCaseNumbers[i]);
+            }
+
+            //		console.log("final--" , final);
+            let val = Object.values(groupedCaseNumbers);
+            console.log("Object.values--", val);
+            console.log("groupedCaseNumbers!", groupedCaseNumbers);
+            let cak = [];
+            let copiedarr = [];
+            for (let i = 0; i < val.length; i++) {
+
+                //	console.log("Object.values for palnId--" , val[i]);
+                groupedPlanIds = groupBy(val[i], 'planId')
+                let planVal = Object.values(groupedPlanIds)
+                console.log("Object.values for grouped PlanIds--", planVal);
+
+                for (let j = 0; j < planVal.length; j++) {
+                    let uniquePlanIds = new Set();
+                    console.log("planVal[j]--", planVal[j]);
+                    cak = planVal[j].map(row => {
+                        if (!uniquePlanIds.has(row.planId)) {
+                            uniquePlanIds.add(row.planId);
+                            return {...row, caseNumber: row.caseNumber, createdDate: row.createdDate };
+                            //		copiedarr.push(cak);
+                        }
+                        return {...row, caseNumber: null, createdDate: null, planId: null };
+                        //copiedarr.push(cak);
+                        //console.log("copiedarr--" ,copiedarr);
+
+                    });
+                    /*		for(let k=0; k<planVal[j].length ;k++){
+									//console.log("planVal[j][k]--" ,planVal[j][k]);
+												}*/
+
+                    copiedarr.push(cak);
+
+                }
+
+            }
+            console.log("copiedarr--", copiedarr);
+
+            for (let i = 0; i < copiedarr.length; i++) {
+                let can;
+                console.log("copiedarr--", copiedarr[i]);
+                for (let j = 0; copiedarr[i].length; j++) {
+                    //	can=[...copiedarr[i][j]];
+                }
+                console.log("copiedarr[i][j]--", copiedarr[i]);
+            }
+
+
+            const flattenedArr = copiedarr.flat(1);
+            console.log("flattenedArr--", flattenedArr);
+            this.data = flattenedArr;
+            console.log("tempRecords!", tempRecords);
+        }
+
+        if (error) {
+            console.log("error Occurred!", error);
+        }
+
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 public class CaseWrapper {
     @AuraEnabled public string caseNumber;
     @AuraEnabled public datetime createdDate;
