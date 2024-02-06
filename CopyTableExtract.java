@@ -13,6 +13,49 @@ public class CaseWrapper {
         this.callTypes = '';
 
         // Concatenate Call Type values
+        if (ca.Call_Type__c != null) {
+            if (ca.Call_Activity__c == 'Inquiry') {
+                this.callTypes += 'Inquiry: ' + ca.Call_Type__c + ', ';
+            } else if (ca.Call_Activity__c == 'Transaction') {
+                this.callTypes += 'Transaction: ' + ca.Call_Type__c + ', ';
+            } else if (ca.Call_Activity__c == 'Account Maintenance') {
+                this.callTypes += 'Account Maintenance: ' + ca.Call_Type__c + ', ';
+            } else if (ca.Call_Activity__c == 'Forms') {
+                this.callTypes += 'Forms: ' + ca.Call_Type__c + ', ';
+            } else if (ca.Call_Activity__c == 'Hand-Off Case' || ca.Call_Activity__c == 'NIGO Callback') {
+                this.callTypes += ca.Call_Activity__c + ': ' + ca.Call_Type__c + ', ';
+            }
+        }
+
+        // Remove trailing comma and space if the string is not empty
+        if (!String.isEmpty(this.callTypes)) {
+            this.callTypes = this.callTypes.substring(0, this.callTypes.length() - 2);
+        }
+    }
+}
+
+
+
+
+
+
+
+
+public class CaseWrapper {
+    @AuraEnabled public string caseNumber;
+    @AuraEnabled public datetime createdDate;
+    @AuraEnabled public string planId;
+    @AuraEnabled public string callTypes; // Concatenated string for all call types
+
+    public CaseWrapper(Case_Actions__c ca) {
+        this.caseNumber = ca.Case__r.CaseNumber;
+        this.createdDate = ca.Case__r.CreatedDate;
+        this.planId = ca.PlanID_Text__c;
+
+        // Initialize the concatenated string
+        this.callTypes = '';
+
+        // Concatenate Call Type values
         if (ca.Call_Activity__c == 'Inquiry' && ca.Call_Type__c != '') {
             this.callTypes += ca.Call_Type__c + ', ';
         }
