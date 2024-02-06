@@ -40,3 +40,46 @@ Public with sharing class CaseRelatedListApex{
     }
     
 }
+
+
+
+
+public with sharing class CaseRelatedListApex {
+   
+    @AuraEnabled(cacheable=true)
+    public static List<Case_Actions__c> getObject(){  
+        List<Case_Actions__c> objCaseList = new List<Case_Actions__c>(); 
+        
+        objCaseList = [SELECT Case__r.CaseNumber, Case__r.CreatedDate, PlanID_Text__c, Call_Activity__c, Call_Type__c 
+                       FROM Case_Actions__c 
+                       WHERE Case__r.Account.SSN__c = '010820241'];
+        
+        return objCaseList;
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static List<Case_Actions__c> getCaseActionRecords(){
+        List<Case_Actions__c> caseActionList = [SELECT Case__r.CaseNumber, Case__r.CreatedDate, PlanID_Text__c, Call_Activity__c, Call_Type__c 
+                                                FROM Case_Actions__c 
+                                                WHERE Case__r.Account.SSN__c = '010820241'];
+       
+        return generateWrapperData(caseActionList);
+    }
+    
+    private static List<Case_Actions__c> generateWrapperData(List<Case_Actions__c> caseActionList) {
+        List<Case_Actions__c> caseActionWrapperList = new List<Case_Actions__c>();
+        
+        for (Case_Actions__c caseAction : caseActionList) {
+            Case_Actions__c caseActionWrap = new Case_Actions__c(
+                Id = caseAction.Id,
+                PlanID_Text__c = caseAction.PlanID_Text__c,
+                Call_Activity__c = caseAction.Call_Activity__c,
+                Call_Type__c = caseAction.Call_Type__c
+            );
+         
+            caseActionWrapperList.add(caseActionWrap); 
+        }
+        
+        return caseActionWrapperList;
+    }
+}
