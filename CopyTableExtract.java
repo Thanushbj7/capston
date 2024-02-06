@@ -1,85 +1,72 @@
-Public with sharing class CaseRelatedListApex{
+public class caseHistoryLWC {
+    
+     @AuraEnabled(cacheable=true)
+    public static List<CaseWrapper> fetchWrapperCases(){
+        
+        List<CaseWrapper> wrapperList= new List<CaseWrapper>();
+        List<Case_Actions__c>  caseList =[SELECT  Case__r.CaseNumber,Case__r.CreatedDate,PlanID_Text__c,Call_Activity__c,Call_Type__c FROM Case_Actions__c where ( Case__r.Account.SSN__c ='010820241' and PlanID_Text__c!='' and Call_Type__c!=null and Call_Activity__c!=null)  ORDER BY Case__r.CaseNumber];
+        for( Case_Actions__c ca :caseList){
+            wrapperList.add( new CaseWrapper(ca));
+        }
+            system.debug('wrapperList '+wrapperList);
    
-    @AuraEnabled(cacheable=true)
-    public static List<Case_Actions__c> getObject(){  
-        LIST< Case_Actions__c > objCaseList = new LIST< Case_Actions__c >(); 
-        
-        objCaseList =[SELECT  Case__r.CaseNumber,Case__r.CreatedDate,PlanID_Text__c,Call_Activity__c,Call_Type__c FROM Case_Actions__c where  Case__r.Account.SSN__c IN  ('010820241')];
-        
-        return  objCaseList;
-        
-          }
-    public static List<Case_Actions__c> getcaseactionrecords(){
-        
-        List<Case_Actions__c> Caseaction = new List<Case_Actions__c>();
-       // if((String.isBlank(Caseid) || Caseid==''||Caseid==null) &&(String.isBlank(clientStatus) || clientStatus==''||clientStatus==null)){
-            Caseaction = [SELECT  Case__r.CaseNumber,Case__r.CreatedDate,PlanID_Text__c,Call_Activity__c,Call_Type__c 
-                               from Case_Actions__c where  Case__r.Account.SSN__c IN  ('010820241') ];
-       
-       // }
-        
-        return generateWrapperData(Caseaction);
+        return  wrapperList;
     }
     
-    private static List<Case_Actions__c> generateWrapperData(List<Case_Actions__c> Caseactionlist) {
-        List<Case_Actions__c> caseactionWrapperList = new List<Case_Actions__c>();
-        
-        for (Case_Actions__c Caction : Caseactionlist) {
-            
-            Case_Actions__c CactionWrap = new Case_Actions__c();
-            
-            CactionWrap.id = Caction.Id;
-            CactionWrap.PlanID_Text__c = Caction.PlanID_Text__c;
-            CactionWrap.Call_Activity__c = Caction.Call_Activity__c;
-            CactionWrap.Call_Type__c = Caction.Call_Type__c;          
+    public class CaseWrapper{
+        @AuraEnabled public string caseNumber;
+        @AuraEnabled  public datetime createdDate;
+        @AuraEnabled public string planId;
+        @AuraEnabled public string callTypeInquiry;
+        @AuraEnabled public string callTypeTransaction;
+        @AuraEnabled public string callTypeAccountMaintenance;
+        @AuraEnabled public string callTypeForms;
+         @AuraEnabled public string callTypeOthers;
          
-            caseactionWrapperList.add(CactionWrap); 
+        
+     /*   @AuraEnabled public map<String , String> callTypeInquiry;
+        @AuraEnabled public map<String , String> callTypeTransaction;
+        @AuraEnabled public map<String , String> callTypeAccountmaintenace;
+        @AuraEnabled public map<String , String> callTypeForms;
+        @AuraEnabled public map<String , String> callTypeOthers;*/
+        
+        
+        public CaseWrapper(Case_Actions__c ca){
+            this.caseNumber=ca.Case__r.CaseNumber;
+            this.createdDate=ca.Case__r.CreatedDate;
+            this.planId=ca.PlanID_Text__c;
+            
+             if(ca.Call_Activity__c=='Inquiry' && ca.Call_Type__c !=''){
+                this.callTypeInquiry = ca.Call_Type__c ;
+            } 
+            if(ca.Call_Activity__c=='Transaction' && ca.Call_Type__c !=''){
+                this.callTypeTransaction = ca.Call_Type__c ;
+            } 
+            if(ca.Call_Activity__c=='Account Maintenance' && ca.Call_Type__c !=''){
+                this.callTypeAccountMaintenance = ca.Call_Type__c ;
+            } 
+            if(ca.Call_Activity__c=='Forms' && ca.Call_Type__c !=''){
+                this.callTypeForms = ca.Call_Type__c ;
+            } 
+            if((ca.Call_Activity__c=='Hand-Off Case' || ca.Call_Activity__c=='NIGO Callback') && ca.Call_Type__c !=''){
+                this.callTypeOthers = ca.Call_Type__c ;
+            } 
+         
+         /*   if(ca.Call_Activity__c=='Transaction'){
+                this.callTypeInquiry.put('Inquiry',ca.Call_Type__c );
+            }  
+            if(ca.Call_Activity__c=='Transaction'){
+                this.callTypeInquiry.put('Inquiry',ca.Call_Type__c );
+            }  
+            if(ca.Call_Activity__c=='Transaction'){
+                this.callTypeInquiry.put('Inquiry',ca.Call_Type__c );
+            }  
+            if(ca.Call_Activity__c=='Transaction'){
+                this.callTypeInquiry.put('Inquiry',ca.Call_Type__c );
+            }  */
+         
         }
         
-        return caseactionWrapperList;
     }
     
-}
-
-
-
-
-public with sharing class CaseRelatedListApex {
-   
-    @AuraEnabled(cacheable=true)
-    public static List<Case_Actions__c> getObject(){  
-        List<Case_Actions__c> objCaseList = new List<Case_Actions__c>(); 
-        
-        objCaseList = [SELECT Case__r.CaseNumber, Case__r.CreatedDate, PlanID_Text__c, Call_Activity__c, Call_Type__c 
-                       FROM Case_Actions__c 
-                       WHERE Case__r.Account.SSN__c = '010820241'];
-        
-        return objCaseList;
-    }
-
-    @AuraEnabled(cacheable=true)
-    public static List<Case_Actions__c> getCaseActionRecords(){
-        List<Case_Actions__c> caseActionList = [SELECT Case__r.CaseNumber, Case__r.CreatedDate, PlanID_Text__c, Call_Activity__c, Call_Type__c 
-                                                FROM Case_Actions__c 
-                                                WHERE Case__r.Account.SSN__c = '010820241'];
-       
-        return generateWrapperData(caseActionList);
-    }
-    
-    private static List<Case_Actions__c> generateWrapperData(List<Case_Actions__c> caseActionList) {
-        List<Case_Actions__c> caseActionWrapperList = new List<Case_Actions__c>();
-        
-        for (Case_Actions__c caseAction : caseActionList) {
-            Case_Actions__c caseActionWrap = new Case_Actions__c(
-                Id = caseAction.Id,
-                PlanID_Text__c = caseAction.PlanID_Text__c,
-                Call_Activity__c = caseAction.Call_Activity__c,
-                Call_Type__c = caseAction.Call_Type__c
-            );
-         
-            caseActionWrapperList.add(caseActionWrap); 
-        }
-        
-        return caseActionWrapperList;
-    }
 }
