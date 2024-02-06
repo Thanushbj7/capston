@@ -1,3 +1,47 @@
+// Assuming you have an array of objects named val
+
+let copiedarr = [];
+
+for (let i = 0; i < val.length; i++) {
+    let groupedPlanIds = groupBy(val[i], 'planId');
+    let planVal = Object.values(groupedPlanIds);
+
+    for (let j = 0; j < planVal.length; j++) {
+        let uniquePlanIds = new Set();
+        let cak = planVal[j].map(row => {
+            if (!uniquePlanIds.has(row.planId)) {
+                uniquePlanIds.add(row.planId);
+                return {
+                    caseNumber: row.caseNumber,
+                    createdDate: row.createdDate,
+                    planId: row.planId,
+                    callType: row.callType, // Assuming there is a callType field in your data
+                };
+            }
+            return {
+                caseNumber: null,
+                createdDate: null,
+                planId: null,
+                callType: null,
+            };
+        });
+        copiedarr.push(cak);
+    }
+}
+
+const flattenedArr = copiedarr.flat(1);
+console.log("flattenedArr--", flattenedArr);
+// Now flattenedArr contains organized data with callType values in the same row
+
+
+
+
+
+
+
+
+
+
 import { LightningElement, api, track, wire } from 'lwc';
 import { publish, MessageContext } from 'lightning/messageService';
 import EXAMPLE_MESSAGE_CHANNEL from '@salesforce/messageChannel/ExampleMessageChannel__c';
