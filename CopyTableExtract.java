@@ -70,3 +70,40 @@ public class caseHistoryLWC {
     }
     
 }
+
+
+
+public class CaseHistoryLWC {
+    
+    @AuraEnabled(cacheable=true)
+    public static List<CaseWrapper> fetchWrapperCases(){
+        List<CaseWrapper> wrapperList = new List<CaseWrapper>();
+        
+        List<Case_Actions__c> caseList = [SELECT Case__r.CaseNumber, Case__r.CreatedDate, PlanID_Text__c, Call_Activity__c, Call_Type__c 
+                                           FROM Case_Actions__c 
+                                           WHERE (Case__r.Account.SSN__c = '010820241' AND PlanID_Text__c != '' AND Call_Type__c != null AND Call_Activity__c != null) 
+                                           ORDER BY Case__r.CaseNumber];
+        
+        for (Case_Actions__c ca : caseList){
+            wrapperList.add(new CaseWrapper(ca));
+        }
+        
+        return wrapperList;
+    }
+    
+    public class CaseWrapper {
+        @AuraEnabled public String caseNumber;
+        @AuraEnabled public Datetime createdDate;
+        @AuraEnabled public String planId;
+        @AuraEnabled public String callActivity;
+        @AuraEnabled public String callType;
+
+        public CaseWrapper(Case_Actions__c ca) {
+            this.caseNumber = ca.Case__r.CaseNumber;
+            this.createdDate = ca.Case__r.CreatedDate;
+            this.planId = ca.PlanID_Text__c;
+            this.callActivity = ca.Call_Activity__c;
+            this.callType = ca.Call_Type__c;
+        }
+    }
+}
