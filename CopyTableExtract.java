@@ -1,3 +1,43 @@
+public class CaseWrapper {
+    @AuraEnabled public string caseNumber;
+    @AuraEnabled public datetime createdDate;
+    @AuraEnabled public string planId;
+    @AuraEnabled public string callTypes; // Concatenated string for all call types
+
+    public CaseWrapper(Case_Actions__c ca) {
+        this.caseNumber = ca.Case__r.CaseNumber;
+        this.createdDate = ca.Case__r.CreatedDate;
+        this.planId = ca.PlanID_Text__c;
+
+        // Initialize the concatenated string
+        this.callTypes = '';
+
+        // Concatenate Call Type values
+        if (ca.Call_Activity__c == 'Inquiry' && ca.Call_Type__c != '') {
+            this.callTypes += ca.Call_Type__c + ', ';
+        }
+        if (ca.Call_Activity__c == 'Transaction' && ca.Call_Type__c != '') {
+            this.callTypes += ca.Call_Type__c + ', ';
+        }
+        // Add similar blocks for other conditions...
+
+        // Remove trailing comma and space if the string is not empty
+        if (!String.isEmpty(this.callTypes)) {
+            this.callTypes = this.callTypes.substring(0, this.callTypes.length() - 2);
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
 public class caseHistoryLWC {
     
      @AuraEnabled(cacheable=true)
