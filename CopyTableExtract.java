@@ -1,3 +1,45 @@
+// Assuming you have a data array with objects containing 'PlanID_Text__c' and 'Call_Type__c' properties
+const dataArray = [
+  { PlanID_Text__c: 'SomeValue1', Call_Type__c: 'Inquiry' },
+  { PlanID_Text__c: 'SomeValue2', Call_Type__c: 'Transaction' },
+  { PlanID_Text__c: 'SomeValue3', Call_Type__c: 'Account Maintenance' },
+  { PlanID_Text__c: 'SomeValue4', Call_Type__c: 'Forms' },
+  { PlanID_Text__c: 'SomeValue5', Call_Type__c: 'Others' },
+];
+
+// Initialize a variable to store the modified data
+let modifiedData = [];
+
+// Specify the value you want to check in the planId
+const desiredPlanIdValue = 'SomeValue2';
+
+// Loop through the data array and modify the call_type based on planId
+for (const row of dataArray) {
+  const { PlanID_Text__c, Call_Type__c } = row;
+
+  // Check if planId contains the desired value
+  if (PlanID_Text__c && PlanID_Text__c.includes(desiredPlanIdValue)) {
+    // Initialize the call_type value based on your condition
+    row.Call_Type__c = 'NewCallTypeValue';
+  }
+
+  // Add the modified row to the array
+  modifiedData.push(row);
+}
+
+// Log the modified data
+console.log('Modified Data:', modifiedData);
+
+
+
+
+
+
+
+
+
+
+
 // Assuming you have a data array with objects containing 'Call_Activity__c' and 'Call_Type__c' properties
 const dataArray = [
   { Call_Activity__c: 'Inquiry', Call_Type__c: 'SomeValue1' },
