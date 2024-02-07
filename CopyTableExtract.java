@@ -1,3 +1,47 @@
+// Assuming you have a data array with objects containing 'Call_Activity__c' and 'Call_Type__c' properties
+const dataArray = [
+  { Call_Activity__c: 'Inquiry', Call_Type__c: 'SomeValue1' },
+  { Call_Activity__c: 'Transaction', Call_Type__c: 'SomeValue2' },
+  { Call_Activity__c: 'Account Maintenance', Call_Type__c: 'SomeValue3' },
+  { Call_Activity__c: 'Forms', Call_Type__c: 'SomeValue4' },
+  { Call_Activity__c: 'Others', Call_Type__c: 'SomeValue5' },
+];
+
+// Initialize an object to store call_type values for each activity
+const callTypeValues = {};
+
+// Function to collect call_type values for each activity
+function collectCallTypeValues(dataArray) {
+  for (const row of dataArray) {
+    const { Call_Activity__c, Call_Type__c } = row;
+
+    if (Call_Activity__c && Call_Type__c) {
+      if (!callTypeValues[Call_Activity__c]) {
+        callTypeValues[Call_Activity__c] = [];
+      }
+      
+      callTypeValues[Call_Activity__c].push(Call_Type__c);
+    }
+  }
+}
+
+// Call the function with your data array
+collectCallTypeValues(dataArray);
+
+// Log the collected call_type values
+console.log('Call Type Values:', callTypeValues);
+
+
+
+
+
+
+
+
+
+
+
+
 <template>
     <div style="height: 300px;">
             <h2 slot="title">
