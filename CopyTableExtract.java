@@ -1,3 +1,41 @@
+// Assuming you have an array of objects as your data
+const dataArray = [
+  { Name: 'John', Age: 25 },
+  { Name: 'Alice', Age: 30 },
+  { Name: 'Bob', Age: 22 },
+];
+
+// Function to move a specific value to the first position
+function moveValueToFirstPosition(data, key, value) {
+  const newData = [...data];
+  const index = newData.findIndex(item => item[key] === value);
+
+  if (index !== -1) {
+    const movedItem = newData.splice(index, 1)[0];
+    newData.unshift(movedItem);
+  }
+
+  return newData;
+}
+
+// Specify the key and value you want to move to the first position
+const keyToMove = 'Name';
+const valueToMove = 'Alice';
+
+// Move the specified value to the first position
+const modifiedData = moveValueToFirstPosition(dataArray, keyToMove, valueToMove);
+
+// Log the modified data
+console.log('Modified Data:', modifiedData);
+
+
+
+
+
+
+
+
+
 // Assuming you have a data array with objects containing 'PlanID_Text__c' and 'Call_Type__c' properties
 const dataArray = [
   { PlanID_Text__c: 'SomeValue1', Call_Type__c: 'Inquiry' },
