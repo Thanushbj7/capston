@@ -1,3 +1,37 @@
+const callTypeInquiryValues = [];
+const callTypeTransactionValues = [];
+const callTypeAccountMaintenanceValues = [];
+const callTypeFormsValues = [];
+const callTypeOthersValues = [];
+
+dataArray.forEach(item => {
+  const { CallType } = item;
+
+  if (CallType === 'Inquiry') {
+    callTypeInquiryValues.push(item);
+  } else if (CallType === 'Transaction') {
+    callTypeTransactionValues.push(item);
+  } else if (CallType === 'Account Maintenance') {
+    callTypeAccountMaintenanceValues.push(item);
+  } else if (CallType === 'Forms') {
+    callTypeFormsValues.push(item);
+  } else if (CallType === 'Others') {
+    callTypeOthersValues.push(item);
+  }
+});
+
+console.log('Call Type Inquiry Values:', callTypeInquiryValues);
+console.log('Call Type Transaction Values:', callTypeTransactionValues);
+console.log('Call Type Account Maintenance Values:', callTypeAccountMaintenanceValues);
+console.log('Call Type Forms Values:', callTypeFormsValues);
+console.log('Call Type Others Values:', callTypeOthersValues);
+
+
+
+
+
+
+
 // Assuming you have an array of objects as your data
 const dataArray = [
   { Name: 'John', Age: 25 },
