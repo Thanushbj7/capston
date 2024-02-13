@@ -1,3 +1,37 @@
+@isTest
+public class TestPopulatePAAG {
+
+    @isTest
+    static void testGWSettingMapPopulation() {
+        // Test scenario: Check if GWSettingMap is populated correctly
+
+        // Create test data with a GenericWithdrawals__c record having non-null API_Name__c
+        GenericWithdrawals__c testGWRecord = new GenericWithdrawals__c(API_Name__c = 'TestAPIName');
+        // Set other required fields as needed
+        // ...
+
+        // Insert the test record
+        insert testGWRecord;
+
+        // Call the populatePAAG method
+        Test.startTest();
+        // Assuming populatePAAG is in a class named MyClass
+        MyClass.populatePAAG();
+        Test.stopTest();
+
+        // Ensure that GWSettingMap is populated with the expected values
+        // Adjust the assertions based on your specific requirements
+        System.assertEquals(1, MyClass.GWSettingMap.size(), 'GWSettingMap should be populated with one record');
+        System.assertEquals(testGWRecord, MyClass.GWSettingMap.get('TestAPIName'), 'GWSettingMap should contain the correct record');
+    }
+}
+
+
+
+
+
+
+
 global static ResponseWrapper populatePAAG() {
         System.debug('POPULATE PAAG');
         
