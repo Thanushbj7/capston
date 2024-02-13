@@ -1,3 +1,38 @@
+static testMethod void testRest() {
+            String xml= '<sfplan>'+
+                '<plan><planid>102201</planid><Plan_Name_ist__c>Plan Hai par Nahi Hai</Plan_Name_ist__c><General_Loan_Detail__c>test1</General_Loan_Detail__c><Residential_Loan_Detail__c> </Residential_Loan_Detail__c><General_Minimum_Loan_Duration_in_months__c> </General_Minimum_Loan_Duration_in_months__c><Residential_Loan_Minimum__c> </Residential_Loan_Minimum__c><General_Loan_Maximum_Duration_in_months__c> The lesser of: $ or $50,000 less the highest outstanding loan balance in the past 12 months. </General_Loan_Maximum_Duration_in_months__c><Residential_Loan_Max_Duration_in_months__c> The lesser of: $SO_MAXIMUM_LOAN_AMOUNT or $50,000 less the highest outstanding loan balance in the past 12 months. </Residential_Loan_Max_Duration_in_months__c><General_Purpose_Loan_Duration__c> NA </General_Purpose_Loan_Duration__c><Residential_Loan_Duration__c> NA </Residential_Loan_Duration__c><General_Loan_Frequency__c> No Restrictions </General_Loan_Frequency__c><Residential_Loan_Frequency__c> No Restrictions </Residential_Loan_Frequency__c><Display_Local_Office_Subsection__c>true</Display_Local_Office_Subsection__c><Display_Local_Office_Subsection>  <Local_Office_Contact_Name__c>PHOENIX, AZ</Local_Office_Contact_Name__c><Local_Office_Address_Line_1__c /><Local_Office_Address_Line_2__c /><Local_Office_Address_Line_3__c /><Local_Office_City__c /> <Local_Office_State__c>AZ</Local_Office_State__c> <Local_Office_Zip__c /> <Local_Office_Phone__c /><Local_Office_Toll_Free__c /> <Local_Office_Fax__c /> </Display_Local_Office_Subsection></plan>'
+                +
+                '<plan><planid>2020202</planid><General_Loan_Detail__c>test2</General_Loan_Detail__c><Client_Id__c>testLMP</Client_Id__c><PAAG_Configuration__c>LMP</PAAG_Configuration__c><Residential_Loan_Detail__c> </Residential_Loan_Detail__c><General_Minimum_Loan_Duration_in_months__c> </General_Minimum_Loan_Duration_in_months__c><Residential_Loan_Minimum__c> </Residential_Loan_Minimum__c><General_Loan_Maximum_Duration_in_months__c> The lesser of: $ or $50,000 less the highest outstanding loan balance in the past 12 months. </General_Loan_Maximum_Duration_in_months__c><Residential_Loan_Max_Duration_in_months__c> The lesser of: $SO_MAXIMUM_LOAN_AMOUNT or $50,000 less the highest outstanding loan balance in the past 12 months. </Residential_Loan_Max_Duration_in_months__c><General_Purpose_Loan_Duration__c> NA </General_Purpose_Loan_Duration__c><Residential_Loan_Duration__c> NA </Residential_Loan_Duration__c><General_Loan_Frequency__c> No Restrictions </General_Loan_Frequency__c><Residential_Loan_Frequency__c> No Restrictions </Residential_Loan_Frequency__c><Display_Rep_Information_Subsection__c>true</Display_Rep_Information_Subsection__c><Display_Rep_Information_Subsection><Rep_Name__c>WILLIAM (BILL) DIANA</Rep_Name__c><Rep_Role__c>BROKER</Rep_Role__c><Rep_Local_Phone__c>201-845-6600</Rep_Local_Phone__c><Rep_Toll_Free__c /><Rep_Cell_Phone__c /><Rep_Email__c>BDIANA@MMA-NE.COM</Rep_Email__c><Rep_Pass_Code__c /><Rep_Access_Code__c>160214</Rep_Access_Code__c></Display_Rep_Information_Subsection></plan>'
+                +
+                '<plan><planid>6060606</planid><General_Loan_Detail__c>test2</General_Loan_Detail__c><Residential_Loan_Detail__c> </Residential_Loan_Detail__c><General_Minimum_Loan_Duration_in_months__c> </General_Minimum_Loan_Duration_in_months__c><Residential_Loan_Minimum__c> </Residential_Loan_Minimum__c><General_Loan_Maximum_Duration_in_months__c> The lesser of: $ or $50,000 less the highest outstanding loan balance in the past 12 months. </General_Loan_Maximum_Duration_in_months__c><Residential_Loan_Max_Duration_in_months__c> The lesser of: $SO_MAXIMUM_LOAN_AMOUNT or $50,000 less the highest outstanding loan balance in the past 12 months. </Residential_Loan_Max_Duration_in_months__c><General_Purpose_Loan_Duration__c> NA </General_Purpose_Loan_Duration__c><Residential_Loan_Duration__c> NA </Residential_Loan_Duration__c><General_Loan_Frequency__c> No Restrictions </General_Loan_Frequency__c><Residential_Loan_Frequency__c> No Restrictions </Residential_Loan_Frequency__c></plan>'
+                +
+                '</sfplan>';
+     
+        RestRequest req = new RestRequest(); // Build the REST Request for testing
+       
+        req.addHeader('Content-Type', 'application/xml'); // Add a JSON Header as it is validated
+        req.requestURI = '/services/apexrest/SETIT-Conversion/*';  
+        req.httpMethod = 'POST';        // Perform a POST
+        req.requestBody = Blob.valueof(xml); // Add JSON Message as a POST
+        
+        RestResponse res = new RestResponse();
+        RestContext.request = req;
+        RestContext.response = res;
+        
+        PAAGSetting__c setting= new PAAGSetting__c(Name='AAME',API_Name__c='AAME__c',Object__c='PAAG__c',Value_1__c='test',Value_2__c='test',Value_LMP_2__c='test',Value_LMP_3__c='test',Value_LMP_4__c='test',Value_LMP_5__c='test',Value_LMP__c='test');        
+        insert setting;
+
+        SetITDataConversion.populatePAAG();
+       
+        
+    }
+
+
+
+
+
+
+
 @isTest
 public class TestPopulatePAAG {
 
