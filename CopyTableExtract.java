@@ -1,3 +1,17 @@
+Map<String, GenericWithdrawals__c> GWSettingMap = new Map<String, GenericWithdrawals__c>();
+        GenericWithdrawals__c nullSetting=new GenericWithdrawals__c(Name='AAME',API_Name__c=null);
+        insert nullSetting;
+            for(GenericWithdrawals__c  GWCustomSetting : GenericWithdrawals__c.getall().values()){
+              if(GWCustomSetting.API_Name__c!= null){
+                GWSettingMap.put(GWCustomSetting.API_Name__c,GWCustomSetting);
+            }
+       
+            }
+        
+         System.assertEquals(0, GWSettingMap.size(), 'Null values in API_Name__c should not be added to GWcustomMap');
+
+
+
 @isTest
 private class YourApexClassTest {
 
