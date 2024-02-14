@@ -1,3 +1,38 @@
+@isTest
+private class YourApexClassTest {
+
+    @isTest
+    static void positiveTest() {
+        // Positive Test Case: Valid GWCustomSetting with non-null API_Name__c
+        GenericWithdrawals__c validSetting = new GenericWithdrawals__c(API_Name__c = 'ValidAPIName');
+        insert validSetting;
+
+        // Call the method or trigger that utilizes the provided code segment
+
+        // Assert that GWSettingMap is correctly populated
+        System.assertEquals(expectedValue, actualValue);
+    }
+
+    @isTest
+    static void negativeTest() {
+        // Negative Test Case: GWCustomSetting with null API_Name__c
+        GenericWithdrawals__c nullSetting = new GenericWithdrawals__c(API_Name__c = null);
+        insert nullSetting;
+
+        // Call the method or trigger that utilizes the provided code segment
+
+        // Assert that GWSettingMap remains unchanged or is empty
+        System.assertEquals(expectedValue, actualValue);
+    }
+}
+
+
+
+
+
+
+
+
 static testMethod void testRest() {
             String xml= '<sfplan>'+
                 '<plan><planid>102201</planid><Plan_Name_ist__c>Plan Hai par Nahi Hai</Plan_Name_ist__c><General_Loan_Detail__c>test1</General_Loan_Detail__c><Residential_Loan_Detail__c> </Residential_Loan_Detail__c><General_Minimum_Loan_Duration_in_months__c> </General_Minimum_Loan_Duration_in_months__c><Residential_Loan_Minimum__c> </Residential_Loan_Minimum__c><General_Loan_Maximum_Duration_in_months__c> The lesser of: $ or $50,000 less the highest outstanding loan balance in the past 12 months. </General_Loan_Maximum_Duration_in_months__c><Residential_Loan_Max_Duration_in_months__c> The lesser of: $SO_MAXIMUM_LOAN_AMOUNT or $50,000 less the highest outstanding loan balance in the past 12 months. </Residential_Loan_Max_Duration_in_months__c><General_Purpose_Loan_Duration__c> NA </General_Purpose_Loan_Duration__c><Residential_Loan_Duration__c> NA </Residential_Loan_Duration__c><General_Loan_Frequency__c> No Restrictions </General_Loan_Frequency__c><Residential_Loan_Frequency__c> No Restrictions </Residential_Loan_Frequency__c><Display_Local_Office_Subsection__c>true</Display_Local_Office_Subsection__c><Display_Local_Office_Subsection>  <Local_Office_Contact_Name__c>PHOENIX, AZ</Local_Office_Contact_Name__c><Local_Office_Address_Line_1__c /><Local_Office_Address_Line_2__c /><Local_Office_Address_Line_3__c /><Local_Office_City__c /> <Local_Office_State__c>AZ</Local_Office_State__c> <Local_Office_Zip__c /> <Local_Office_Phone__c /><Local_Office_Toll_Free__c /> <Local_Office_Fax__c /> </Display_Local_Office_Subsection></plan>'
