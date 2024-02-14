@@ -1,3 +1,7 @@
+System.assert(!GWSettingMap.containsKey(nullSetting.API_Name__c), 'Null API_Name__c should not be added to GWSettingMap');
+
+
+
 Map<String, GenericWithdrawals__c> GWSettingMap = new Map<String, GenericWithdrawals__c>();
         GenericWithdrawals__c nullSetting=new GenericWithdrawals__c(Name='AAME',API_Name__c=null);
         insert nullSetting;
