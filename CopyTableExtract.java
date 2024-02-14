@@ -9,6 +9,47 @@ private class YourApexClassTest {
 
         // Call the method or trigger that utilizes the provided code segment
 
+        // Isolate the GWSettingMap.put operation
+        GWSettingMap.put(validSetting.API_Name__c, validSetting);
+
+        // Assert that GWSettingMap is correctly populated
+        System.assertEquals(expectedValue, actualValue);
+    }
+
+    @isTest
+    static void negativeTest() {
+        // Negative Test Case: GWCustomSetting with null API_Name__c
+        GenericWithdrawals__c nullSetting = new GenericWithdrawals__c(API_Name__c = null);
+        insert nullSetting;
+
+        // Call the method or trigger that utilizes the provided code segment
+
+        // Isolate the GWSettingMap.put operation
+        GWSettingMap.put(nullSetting.API_Name__c, nullSetting);
+
+        // Assert that GWSettingMap remains unchanged or is empty
+        System.assertEquals(expectedValue, actualValue);
+    }
+}
+
+
+
+
+
+
+
+
+@isTest
+private class YourApexClassTest {
+
+    @isTest
+    static void positiveTest() {
+        // Positive Test Case: Valid GWCustomSetting with non-null API_Name__c
+        GenericWithdrawals__c validSetting = new GenericWithdrawals__c(API_Name__c = 'ValidAPIName');
+        insert validSetting;
+
+        // Call the method or trigger that utilizes the provided code segment
+
         // Assert that GWSettingMap is correctly populated
         System.assertEquals(expectedValue, actualValue);
     }
