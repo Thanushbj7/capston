@@ -1,3 +1,20 @@
+Boolean containsNullSetting = false;
+for (GenericWithdrawals__c value : GWSettingMap.values()) {
+    if (value == nullSetting) {
+        containsNullSetting = true;
+        break;
+    }
+}
+
+System.assert(!containsNullSetting, 'Null API_Name__c should not be added to GWSettingMap');
+
+
+
+
+
+
+
+
 System.assert(!GWSettingMap.containsKey(nullSetting.API_Name__c), 'Null API_Name__c should not be added to GWSettingMap');
 
 
