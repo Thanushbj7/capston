@@ -1,255 +1,144 @@
-Boolean containsNullSetting = false;
-for (GenericWithdrawals__c value : GWSettingMap.values()) {
-    if (value == nullSetting) {
-        containsNullSetting = true;
-        break;
-    }
-}
-
-System.assert(!containsNullSetting, 'Null API_Name__c should not be added to GWSettingMap');
-
-
-
-
-
-
-
-
-System.assert(!GWSettingMap.containsKey(nullSetting.API_Name__c), 'Null API_Name__c should not be added to GWSettingMap');
-
-
-
-Map<String, GenericWithdrawals__c> GWSettingMap = new Map<String, GenericWithdrawals__c>();
-        GenericWithdrawals__c nullSetting=new GenericWithdrawals__c(Name='AAME',API_Name__c=null);
-        insert nullSetting;
-            for(GenericWithdrawals__c  GWCustomSetting : GenericWithdrawals__c.getall().values()){
-              if(GWCustomSetting.API_Name__c!= null){
-                GWSettingMap.put(GWCustomSetting.API_Name__c,GWCustomSetting);
-            }
-       
-            }
-        
-         System.assertEquals(0, GWSettingMap.size(), 'Null values in API_Name__c should not be added to GWcustomMap');
-
-
-
-@isTest
-private class YourApexClassTest {
-
-    @isTest
-    static void positiveTest() {
-        // Positive Test Case: Valid GWCustomSetting with non-null API_Name__c
-        GenericWithdrawals__c validSetting = new GenericWithdrawals__c(API_Name__c = 'ValidAPIName');
-        insert validSetting;
-
-        // Call the method or trigger that utilizes the provided code segment
-
-        // Isolate the GWSettingMap.put operation
-        GWSettingMap.put(validSetting.API_Name__c, validSetting);
-
-        // Assert that GWSettingMap is correctly populated
-        System.assertEquals(expectedValue, actualValue);
-    }
-
-    @isTest
-    static void negativeTest() {
-        // Negative Test Case: GWCustomSetting with null API_Name__c
-        GenericWithdrawals__c nullSetting = new GenericWithdrawals__c(API_Name__c = null);
-        insert nullSetting;
-
-        // Call the method or trigger that utilizes the provided code segment
-
-        // Isolate the GWSettingMap.put operation
-        GWSettingMap.put(nullSetting.API_Name__c, nullSetting);
-
-        // Assert that GWSettingMap remains unchanged or is empty
-        System.assertEquals(expectedValue, actualValue);
-    }
-}
-
-
-
-
-
-
-
-
-@isTest
-private class YourApexClassTest {
-
-    @isTest
-    static void positiveTest() {
-        // Positive Test Case: Valid GWCustomSetting with non-null API_Name__c
-        GenericWithdrawals__c validSetting = new GenericWithdrawals__c(API_Name__c = 'ValidAPIName');
-        insert validSetting;
-
-        // Call the method or trigger that utilizes the provided code segment
-
-        // Assert that GWSettingMap is correctly populated
-        System.assertEquals(expectedValue, actualValue);
-    }
-
-    @isTest
-    static void negativeTest() {
-        // Negative Test Case: GWCustomSetting with null API_Name__c
-        GenericWithdrawals__c nullSetting = new GenericWithdrawals__c(API_Name__c = null);
-        insert nullSetting;
-
-        // Call the method or trigger that utilizes the provided code segment
-
-        // Assert that GWSettingMap remains unchanged or is empty
-        System.assertEquals(expectedValue, actualValue);
-    }
-}
-
-
-
-
-
-
-
-
-static testMethod void testRest() {
-            String xml= '<sfplan>'+
-                '<plan><planid>102201</planid><Plan_Name_ist__c>Plan Hai par Nahi Hai</Plan_Name_ist__c><General_Loan_Detail__c>test1</General_Loan_Detail__c><Residential_Loan_Detail__c> </Residential_Loan_Detail__c><General_Minimum_Loan_Duration_in_months__c> </General_Minimum_Loan_Duration_in_months__c><Residential_Loan_Minimum__c> </Residential_Loan_Minimum__c><General_Loan_Maximum_Duration_in_months__c> The lesser of: $ or $50,000 less the highest outstanding loan balance in the past 12 months. </General_Loan_Maximum_Duration_in_months__c><Residential_Loan_Max_Duration_in_months__c> The lesser of: $SO_MAXIMUM_LOAN_AMOUNT or $50,000 less the highest outstanding loan balance in the past 12 months. </Residential_Loan_Max_Duration_in_months__c><General_Purpose_Loan_Duration__c> NA </General_Purpose_Loan_Duration__c><Residential_Loan_Duration__c> NA </Residential_Loan_Duration__c><General_Loan_Frequency__c> No Restrictions </General_Loan_Frequency__c><Residential_Loan_Frequency__c> No Restrictions </Residential_Loan_Frequency__c><Display_Local_Office_Subsection__c>true</Display_Local_Office_Subsection__c><Display_Local_Office_Subsection>  <Local_Office_Contact_Name__c>PHOENIX, AZ</Local_Office_Contact_Name__c><Local_Office_Address_Line_1__c /><Local_Office_Address_Line_2__c /><Local_Office_Address_Line_3__c /><Local_Office_City__c /> <Local_Office_State__c>AZ</Local_Office_State__c> <Local_Office_Zip__c /> <Local_Office_Phone__c /><Local_Office_Toll_Free__c /> <Local_Office_Fax__c /> </Display_Local_Office_Subsection></plan>'
-                +
-                '<plan><planid>2020202</planid><General_Loan_Detail__c>test2</General_Loan_Detail__c><Client_Id__c>testLMP</Client_Id__c><PAAG_Configuration__c>LMP</PAAG_Configuration__c><Residential_Loan_Detail__c> </Residential_Loan_Detail__c><General_Minimum_Loan_Duration_in_months__c> </General_Minimum_Loan_Duration_in_months__c><Residential_Loan_Minimum__c> </Residential_Loan_Minimum__c><General_Loan_Maximum_Duration_in_months__c> The lesser of: $ or $50,000 less the highest outstanding loan balance in the past 12 months. </General_Loan_Maximum_Duration_in_months__c><Residential_Loan_Max_Duration_in_months__c> The lesser of: $SO_MAXIMUM_LOAN_AMOUNT or $50,000 less the highest outstanding loan balance in the past 12 months. </Residential_Loan_Max_Duration_in_months__c><General_Purpose_Loan_Duration__c> NA </General_Purpose_Loan_Duration__c><Residential_Loan_Duration__c> NA </Residential_Loan_Duration__c><General_Loan_Frequency__c> No Restrictions </General_Loan_Frequency__c><Residential_Loan_Frequency__c> No Restrictions </Residential_Loan_Frequency__c><Display_Rep_Information_Subsection__c>true</Display_Rep_Information_Subsection__c><Display_Rep_Information_Subsection><Rep_Name__c>WILLIAM (BILL) DIANA</Rep_Name__c><Rep_Role__c>BROKER</Rep_Role__c><Rep_Local_Phone__c>201-845-6600</Rep_Local_Phone__c><Rep_Toll_Free__c /><Rep_Cell_Phone__c /><Rep_Email__c>BDIANA@MMA-NE.COM</Rep_Email__c><Rep_Pass_Code__c /><Rep_Access_Code__c>160214</Rep_Access_Code__c></Display_Rep_Information_Subsection></plan>'
-                +
-                '<plan><planid>6060606</planid><General_Loan_Detail__c>test2</General_Loan_Detail__c><Residential_Loan_Detail__c> </Residential_Loan_Detail__c><General_Minimum_Loan_Duration_in_months__c> </General_Minimum_Loan_Duration_in_months__c><Residential_Loan_Minimum__c> </Residential_Loan_Minimum__c><General_Loan_Maximum_Duration_in_months__c> The lesser of: $ or $50,000 less the highest outstanding loan balance in the past 12 months. </General_Loan_Maximum_Duration_in_months__c><Residential_Loan_Max_Duration_in_months__c> The lesser of: $SO_MAXIMUM_LOAN_AMOUNT or $50,000 less the highest outstanding loan balance in the past 12 months. </Residential_Loan_Max_Duration_in_months__c><General_Purpose_Loan_Duration__c> NA </General_Purpose_Loan_Duration__c><Residential_Loan_Duration__c> NA </Residential_Loan_Duration__c><General_Loan_Frequency__c> No Restrictions </General_Loan_Frequency__c><Residential_Loan_Frequency__c> No Restrictions </Residential_Loan_Frequency__c></plan>'
-                +
-                '</sfplan>';
-     
-        RestRequest req = new RestRequest(); // Build the REST Request for testing
-       
-        req.addHeader('Content-Type', 'application/xml'); // Add a JSON Header as it is validated
-        req.requestURI = '/services/apexrest/SETIT-Conversion/*';  
-        req.httpMethod = 'POST';        // Perform a POST
-        req.requestBody = Blob.valueof(xml); // Add JSON Message as a POST
-        
-        RestResponse res = new RestResponse();
-        RestContext.request = req;
-        RestContext.response = res;
-        
-        PAAGSetting__c setting= new PAAGSetting__c(Name='AAME',API_Name__c='AAME__c',Object__c='PAAG__c',Value_1__c='test',Value_2__c='test',Value_LMP_2__c='test',Value_LMP_3__c='test',Value_LMP_4__c='test',Value_LMP_5__c='test',Value_LMP__c='test');        
-        insert setting;
-
-        SetITDataConversion.populatePAAG();
-       
-        
-    }
-
-
-
-
-
-
-
-@isTest
-public class TestPopulatePAAG {
-
-    @isTest
-    static void testGWSettingMapPopulation() {
-        // Test scenario: Check if GWSettingMap is populated correctly
-
-        // Create test data with a GenericWithdrawals__c record having non-null API_Name__c
-        GenericWithdrawals__c testGWRecord = new GenericWithdrawals__c(API_Name__c = 'TestAPIName');
-        // Set other required fields as needed
-        // ...
-
-        // Insert the test record
-        insert testGWRecord;
-
-        // Call the populatePAAG method
-        Test.startTest();
-        // Assuming populatePAAG is in a class named MyClass
-        MyClass.populatePAAG();
-        Test.stopTest();
-
-        // Ensure that GWSettingMap is populated with the expected values
-        // Adjust the assertions based on your specific requirements
-        System.assertEquals(1, MyClass.GWSettingMap.size(), 'GWSettingMap should be populated with one record');
-        System.assertEquals(testGWRecord, MyClass.GWSettingMap.get('TestAPIName'), 'GWSettingMap should contain the correct record');
-    }
-}
-
-
-
-
-
-
-
-global static ResponseWrapper populatePAAG() {
-        System.debug('POPULATE PAAG');
-        
-        //For testing puposed the XML Data is read from Static resource instead pulling from request post
-        //StaticResource sr = [Select Body From StaticResource Where Name = 'SETITDATA' LIMIT 1];
-        RestRequest req = RestContext.request;
-        
-        //String xmlData = sr.body.toString();
-        String xmlData = req.requestBody.toString();
-        if(!String.isBlank(xmlData)){
-            initSchemaFieldMap();
-            
-            Map<String ,PAAG__c> paagMap = new Map<String ,PAAG__c>();
-            for(PAAGSetting__c  paagSetting : PAAGSetting__c.getall().values()){
-                paagSettingMap.put(paagSetting.API_Name__c,paagSetting);
-                
-            }
-           
-           Map<String ,GenericWithdrawal__c> GWcustomMap = new Map<String ,GenericWithdrawal__c>();
-            for(GenericWithdrawals__c  GWCustomSetting : GenericWithdrawals__c.getall().values()){
-              if(GWCustomSetting.API_Name__c!= null){
-                GWSettingMap.put(GWCustomSetting.API_Name__c,GWCustomSetting);
-               system.debug('venki 53'+GWSettingMap);
-            }
-       
-            }
-            
-           //  system.debug('PAAGpaagSettingMap>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' +paagSettingMap.get('a2ve00000015YwNAAU'));
-            system.debug('PAAG Size' +paagMap.size() );
-            parseXMLData(xmlData, paagMap);
-            system.debug('PAAG Size' +paagMap.size() );
-           
-            addPlanPAAGInfo(paagMap);
-        }
-        
-        ResponseWrapper resWrapper = new ResponseWrapper();
-        if(paagResultMap.size() > 0){
-            resWrapper.resultInfos = paagResultMap.values();
-        }
-        return resWrapper;
-        
-    }
-
-if(GWCustomSetting.API_Name__c!= null){
-                GWSettingMap.put(GWCustomSetting.API_Name__c,GWCustomSetting);
-
-
-
-@isTest
-public class TestGWCustomMap {
-
-    @isTest
-    static void testNullCheck() {
-        // Test scenario: Check for null values in API_Name__c field
-
-        // Create test data with a GenericWithdrawals__c record having null API_Name__c
-        GenericWithdrawals__c testGWRecord = new GenericWithdrawals__c();
-        // Set other required fields as needed
-        // ...
-
-        // Insert the test record
-        insert testGWRecord;
-
-        // Ensure that the GWcustomMap is populated with non-null values
-        Map<String, GenericWithdrawal__c> GWcustomMap = new Map<String, GenericWithdrawal__c>();
-        for (GenericWithdrawals__c GWCustomSetting : GenericWithdrawals__c.getAll().values()) {
-            if (GWCustomSetting.API_Name__c != null) {
-                GWcustomMap.put(GWCustomSetting.API_Name__c, GWCustomSetting);
-            }
+package com.ing.rs.i401k.business.util;
+
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Map;
+
+import net.jcip.annotations.Immutable;
+import net.jcip.annotations.ThreadSafe;
+import citistreet.id.services.cache.AbstractObjectCacheElementFactory;
+import citistreet.id.services.cache.CacheConfigUtils;
+import citistreet.logging.Log;
+import citistreet.logging.LogFactory;
+
+import com.citistreet.id.i401k.business.util.BusinessException;
+import com.citistreet.id.i401k.business.util.ParticipantInfo;
+import com.citistreet.id.i401k.business.util.ParticipantKey;
+import com.citistreet.sol.util.SolServices;
+import com.ing.cbc.services.CbcServices;
+
+import edu.umd.cs.findbugs.annotations.DefaultAnnotation;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import voya.util.cache.annotation.CacheConfiguration;
+import com.voya.bridge.dao.ParticipantHistoryBridgeDAO;
+import com.citistreet.id.i401k.business.util.*;
+import org.apache.commons.lang.StringUtils;
+import citistreet.id.services.*;
+/**
+ * Cache class that calls the SolService with a duration and caches the response.
+ * The duration would be 3m,6m,1yr,2yr. 
+ */
+@Immutable
+@DefaultAnnotation(NonNull.class)
+public class BalanceHistoryCache implements java.io.Serializable {
+	private static final long serialVersionUID = 1L;
+	private static final Log LOGGER = LogFactory.getLog(BalanceHistoryCache.class);
+    private static final Factory FACTORY = new Factory();
+	private Calendar startDate;
+	private Calendar endDate;
+    private Map<Integer, BalanceHistoryData> balanceHistory;
+	
+	@ThreadSafe
+	@DefaultAnnotation(NonNull.class)
+    @CacheConfiguration("pcf.cache.transition.participant.config")
+	private static final class Factory extends AbstractObjectCacheElementFactory<ParticipantKey, BalanceHistoryCache> {
+		private Factory() {
+			init(CacheConfigUtils.getCacheConfig(CbcServices.CB_PARTICIPANT_CACHE_CONFIG));
+		}
+
+		@Override
+		public BalanceHistoryCache createInstance(final ParticipantKey key) {
+			return new BalanceHistoryCache(key);
+		}
+	}
+
+    public static BalanceHistoryCache getInstance(final ParticipantKey key){
+        if (key == null) {
+            throw new IllegalArgumentException("Invalid Participant Key");
         }
 
-        // Perform the assertion to check that GWcustomMap contains the expected values
-        System.assertEquals(0, GWcustomMap.size(), 'Null values in API_Name__c should not be added to GWcustomMap');
+        return FACTORY.getInstance(key);
     }
+	
+	/**
+	 * Private constructor
+	 * @param key
+	 */
+	private BalanceHistoryCache(final ParticipantKey key) {
+		ParticipantInfo partInfo = ParticipantInfo.getInstance(key.getClient(),key.getPlan(),key.getParticipant());
+		int pptAcctAge = partInfo.getParticipantAccountAgeInMonths();
+		startDate = Calendar.getInstance();
+		endDate = Calendar.getInstance(); 
+		if(pptAcctAge >= 24) {
+			if(LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Participant's {0} account age is >= 24 months, making a call to SOL service with 2yr duration...",key.getParticipant());
+			}
+			startDate.add(Calendar.YEAR, -2);
+		} else if(pptAcctAge >= 12  ) {
+			if(LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Participant's {0} account age is >=12 months, making a call to SOL service with 1yr duration...",key.getParticipant());
+			}
+			startDate.add(Calendar.YEAR, -1);
+		} else if(pptAcctAge >= 6 ) {
+			if(LOGGER.isDebugEnabled()){
+				LOGGER.debug("Participant's {0} account age is >=6 months,  making a call to SOL service with 6 months duration...",key.getParticipant());
+			}
+			startDate.add(Calendar.MONTH, -(6));
+		} else if (pptAcctAge >= 3) {
+			if(LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Participant's {0} account age is >=3 months,  making a call to SOL service with 6 months duration...",key.getParticipant());
+			}
+			startDate.add(Calendar.MONTH, -(3));
+		} else {
+			startDate = null;
+			endDate = null;
+		}
+
+        if (startDate == null && endDate == null) {
+            //Participant's account is lessThan three months old.. Return empty Map.
+            balanceHistory = Collections.emptyMap();
+        } else {
+            try {
+				PlanInfo pi = PlanInfo.getInstance(key.getClient(), key.getPlan());
+				PlanControl pc = pi.getPlanControl(ControlType.WEB);
+				boolean isPlatformUpgradeEnabled = StringUtils.equalsIgnoreCase("B", pc.getPlatformUpgradeFlag());
+				boolean bridgeappEnabledKey = StringUtils.equals("true",System.getProperty("ppt.bridgeapp.enabled"));
+
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("isPlatformUpgradeEnabled"+isPlatformUpgradeEnabled);
+					LOGGER.debug("bridgeappEnabledKey"+bridgeappEnabledKey);
+				}
+				if (bridgeappEnabledKey && isPlatformUpgradeEnabled) {
+					ServiceManager serviceManager = ServiceManagerFactory.getInstance();
+					ParticipantHistoryBridgeDAO participantHistBridgeClient = serviceManager.getService(ServiceID.valueOf("participant.history.bridge.dao"));
+					balanceHistory = participantHistBridgeClient.getBalanceHistoryData(key.getClient(), key.getPlan(), key.getParticipant(),startDate,endDate);
+				}else {
+
+					SolServices solService = SolServices.getInstance(key.getClient(), key.getPlan(), key.getParticipant());
+					balanceHistory = solService.getBalanceHistoryData(startDate, endDate);
+				}
+            } catch (BusinessException solException) {
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error("Exception occured for Balance History Sol Service....", solException);
+                }
+                throw solException;
+            }
+        }
+	}
+
+	/**
+	 * Returns the BalanceHistoryData sorted Map
+	 * @return Map<Integer,BalanceHistoryData>
+	 */
+	public Map<Integer, BalanceHistoryData> getBalanceHistoryData() {
+		return balanceHistory;
+	}
+	
+	public Calendar getStartDate() {
+		return this.startDate;
+	}
+	
+	public Calendar getEndDate() {
+		return this.endDate;
+	}
 }
