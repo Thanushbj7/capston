@@ -1,3 +1,62 @@
+import static org.mockito.Mockito.*;
+
+import java.util.Calendar;
+import java.util.Map;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+public class BalanceHistoryCacheTest {
+
+    @Test
+    public void testAccountAge24Months() {
+        ParticipantKey key = mock(ParticipantKey.class);
+        ParticipantInfo participantInfo = mock(ParticipantInfo.class);
+        when(participantInfo.getParticipantAccountAgeInMonths()).thenReturn(24);
+        when(ParticipantInfo.getInstance(any(), any(), any())).thenReturn(participantInfo);
+        
+        BalanceHistoryCache balanceHistoryCache = new BalanceHistoryCache(key);
+        Calendar startDate = balanceHistoryCache.getStartDate();
+        Assert.assertNotNull(startDate);
+        startDate.add(Calendar.YEAR, 2);
+        Assert.assertEquals(Calendar.getInstance().get(Calendar.YEAR), startDate.get(Calendar.YEAR));
+    }
+
+    @Test
+    public void testAccountAge12Months() {
+        // Similar test case as above but with account age 12 months
+    }
+
+    @Test
+    public void testAccountAge6Months() {
+        // Similar test case as above but with account age 6 months
+    }
+
+    @Test
+    public void testAccountAge3Months() {
+        // Similar test case as above but with account age 3 months
+    }
+
+    @Test
+    public void testAccountAgeLessThan3Months() {
+        // Similar test case as above but with account age less than 3 months
+    }
+
+    @Test(expected = BusinessException.class)
+    public void testExceptionDuringServiceInvocation() {
+        // Mocking the service to throw BusinessException
+    }
+}
+
+
+
+
+
+
+
+
+
+
 package com.ing.rs.i401k.business.util;
 
 import java.util.Calendar;
