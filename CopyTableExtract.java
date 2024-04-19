@@ -1,3 +1,28 @@
+@isTest
+public class CaseWrapperTest {
+
+    @isTest
+    static void testCaseWrapperInitialization() {
+        // Create test data
+        Case_Actions__c caseAction = new Case_Actions__c(
+            // Populate required fields
+        );
+        insert caseAction;
+        
+        // Call the constructor of CaseWrapper class
+        CaseWrapper wrapper = new CaseWrapper(caseAction);
+        
+        // Verify that the wrapper fields are correctly populated
+        System.assertEquals(caseAction.Case__r.CaseNumber, wrapper.caseNumber);
+        // Repeat for other fields as necessary
+    }
+}
+
+
+
+
+
+
 public class CaseWrapper{
         @AuraEnabled public string caseNumber;
         @AuraEnabled  public date createdDate;
