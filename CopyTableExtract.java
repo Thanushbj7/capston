@@ -5,6 +5,39 @@ public class CaseWrapperTest {
     static void testCaseWrapperInitialization() {
         // Create test data
         Case_Actions__c caseAction = new Case_Actions__c(
+            Case__r = new Case(CaseNumber = 'CAS-001', Description = 'Test Description'),
+            Date_Time_c__c = Datetime.now(),
+            PlanID_Text__c = 'Plan123',
+            Call_Activity__c = 'Inquiry',
+            Call_Type__c = 'TypeA'
+            // Add more fields as needed
+        );
+        insert caseAction;
+
+        // Call the constructor of CaseWrapper class with test data
+        CaseWrapper wrapper = new CaseWrapper(caseAction);
+
+        // Verify that the wrapper fields are correctly populated
+        System.assertEquals('CAS-001', wrapper.caseNumber);
+        System.assertEquals(caseAction.Date_Time_c__c.date(), wrapper.createdDate);
+        System.assertEquals('Plan123', wrapper.planId);
+        System.assertEquals(caseAction.Case__r.Id, wrapper.Id);
+        System.assertEquals('Test Description', wrapper.comment);
+        System.assertEquals('TypeA', wrapper.callTypeInquiry);
+
+        // Add more assertions for other scenarios and fields
+    }
+}
+
+
+
+@isTest
+public class CaseWrapperTest {
+
+    @isTest
+    static void testCaseWrapperInitialization() {
+        // Create test data
+        Case_Actions__c caseAction = new Case_Actions__c(
             // Populate required fields
         );
         insert caseAction;
