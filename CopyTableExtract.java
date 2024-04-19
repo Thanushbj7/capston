@@ -1,3 +1,50 @@
+public class CaseWrapper{
+        @AuraEnabled public string caseNumber;
+        @AuraEnabled  public date createdDate;
+        @AuraEnabled public string planId;
+        @AuraEnabled public string callTypeInquiry;
+        @AuraEnabled public string callTypeTransaction;
+        @AuraEnabled public string callTypeAccountMaintenance;
+        @AuraEnabled public string callTypeForms;
+        @AuraEnabled public string callTypeOthers;
+        @AuraEnabled public string Id;
+        @AuraEnabled public string comment;
+        
+        public CaseWrapper(Case_Actions__c ca){
+            this.caseNumber=ca.Case__r.CaseNumber;
+            Date dt= ca.Date_Time_c__c.date();
+            this.createdDate=dt;
+            this.planId=ca.PlanID_Text__c;//ca.PlanID__r.Name;
+            this.Id=ca.Case__r.Id;
+            this.comment=ca.Case__r.Description;
+            
+            
+            if(ca.Call_Activity__c=='Inquiry' && ca.Call_Type__c !=''){
+                this.callTypeInquiry = ca.Call_Type__c ;
+                
+            } 
+            if(ca.Call_Activity__c=='Transaction' && ca.Call_Type__c !=''){
+                this.callTypeTransaction = ca.Call_Type__c ;
+                
+            } 
+            if(ca.Call_Activity__c=='Account Maintenance' && ca.Call_Type__c !=''){
+                this.callTypeAccountMaintenance = ca.Call_Type__c ;
+                
+            } 
+            if(ca.Call_Activity__c=='Forms' && ca.Call_Type__c !=''){
+                this.callTypeForms = ca.Call_Type__c ;
+                
+            } 
+            if((ca.Call_Activity__c=='Hand-Off Case' || ca.Call_Activity__c=='NIGO Callback') && ca.Call_Type__c !=''){
+                this.callTypeOthers = ca.Call_Type__c ;
+                
+            } 
+       }
+   }
+
+
+
+
 import static org.mockito.Mockito.*;
 
 import java.util.Calendar;
