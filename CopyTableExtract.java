@@ -3,6 +3,53 @@ public class CaseWrapperTest {
 
     @isTest
     static void testCaseWrapperInitialization() {
+        // Create a mock Case_Actions__c record
+        Case_Actions__c caseAction = new Case_Actions__c(
+            // Add necessary fields, but exclude CaseNumber
+            Date_Time_c__c = Datetime.now(),
+            PlanID_Text__c = 'Plan123',
+            Call_Activity__c = 'Inquiry',
+            Call_Type__c = 'TypeA'
+            // Add more fields as needed
+        );
+        // Insert the mock record
+        insert caseAction;
+
+        // Create a mock Case record related to Case_Actions__c
+        Case caseRecord = new Case(
+            CaseNumber = 'CAS-001', 
+            Description = 'Test Description'
+            // Add more fields as needed
+        );
+        // Associate the mock Case record with the Case_Actions__c record
+        caseAction.Case__c = caseRecord.Id;
+        update caseAction;
+
+        // Call the constructor of CaseWrapper class with the mock Case_Actions__c record
+        CaseWrapper wrapper = new CaseWrapper(caseAction);
+
+        // Verify that the wrapper fields are correctly populated
+        // Note: Since CaseNumber is not accessible, we'll skip asserting its value
+        System.assertEquals(caseAction.Date_Time_c__c.date(), wrapper.createdDate);
+        System.assertEquals('Plan123', wrapper.planId);
+        System.assertEquals(caseAction.Case__r.Id, wrapper.Id);
+        System.assertEquals('Test Description', wrapper.comment);
+        System.assertEquals('TypeA', wrapper.callTypeInquiry);
+
+        // Add more assertions for other scenarios and fields
+    }
+}
+
+
+
+
+
+
+@isTest
+public class CaseWrapperTest {
+
+    @isTest
+    static void testCaseWrapperInitialization() {
         // Create test data
         Case_Actions__c caseAction = new Case_Actions__c(
             Case__r = new Case(CaseNumber = 'CAS-001', Description = 'Test Description'),
