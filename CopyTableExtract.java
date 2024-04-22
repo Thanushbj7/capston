@@ -1,3 +1,12 @@
+ @AuraEnabled(cacheable=true)
+    public static  List<Console_Quick_Links__c> getQuickLinks(){
+        List<Console_Quick_Links__c> quickLinks= Console_Quick_Links__c.getAll().values();
+      
+        return quickLinks;
+    }
+
+
+
 @isTest
 static void testGetOpenClientOffers() {
     // Create a mock Campaign Offer Summary record
