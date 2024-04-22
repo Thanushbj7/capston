@@ -1,3 +1,26 @@
+@isTest
+static void testGetProfileId() {
+    // Create mock ProfileNames__c record
+    ProfileNames__c mockProfile = new ProfileNames__c(
+        Name = 'Test Profile',
+        Profile_Id__c = '001XXXXXXXXXXXX' // Example profile ID
+        // Add more fields as needed
+    );
+    insert mockProfile;
+
+    // Call the method being tested
+    String profileId = YourClassName.getProfileId();
+
+    // Perform assertions
+    System.assertNotEquals(null, profileId); // Ensure that profileId is not null
+    // Add more assertions as needed
+}
+
+
+
+
+
+
 @AuraEnabled(cacheable=true)
     public static String getProfileId(){
         List<ProfileNames__c> profileIds= ProfileNames__c.getAll().values();
