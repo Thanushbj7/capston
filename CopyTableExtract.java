@@ -1,4 +1,33 @@
- @AuraEnabled(cacheable=true)
+@isTest
+static void testGetQuickLinks() {
+    // Create mock Console Quick Links records
+    List<Console_Quick_Links__c> quickLinks = new List<Console_Quick_Links__c>{
+        new Console_Quick_Links__c(
+            Name = 'Quick Link 1', // Example quick link name
+            // Add more fields as needed
+        ),
+        new Console_Quick_Links__c(
+            Name = 'Quick Link 2', // Example quick link name
+            // Add more fields as needed
+        )
+        // Add more mock records as needed
+    };
+    insert quickLinks;
+
+    // Call the method being tested
+    List<Console_Quick_Links__c> result = YourClassName.getQuickLinks();
+
+    // Perform assertions
+    System.assertEquals(2, result.size()); // Assuming two quick links are returned based on the mock data
+    // Add more assertions as needed
+}
+
+
+
+
+
+
+@AuraEnabled(cacheable=true)
     public static  List<Console_Quick_Links__c> getQuickLinks(){
         List<Console_Quick_Links__c> quickLinks= Console_Quick_Links__c.getAll().values();
       
