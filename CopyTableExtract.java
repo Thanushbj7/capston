@@ -1,3 +1,51 @@
+@isTest
+static void testGetOpenClientOffers() {
+    // Create a mock Campaign Offer Summary record
+    Campaign_Offer_Summary__c offerSummary = new Campaign_Offer_Summary__c(
+        Customer_SSN__c = '123456789', // Example SSN
+        OfferCode__c = 'OFFER001', // Example Offer Code
+        Planid_Text__c = 'Plan123' // Example Plan ID
+        // Add more fields as needed
+    );
+    insert offerSummary;
+
+    // Create a mock Client Offer record
+    Client_Offer__c clientOffer = new Client_Offer__c(
+        Status_OFFER001__c = 'Open', // Example status for the specific offer code
+        Score_OFFER001__c = 80, // Example score for the specific offer code
+        PlanId_OFFER001__c = 'Plan123' // Example Plan ID
+        // Add more fields as needed
+    );
+    insert clientOffer;
+
+    // Create a mock Campaign record
+    Campaign campaign = new Campaign(
+        Name = 'Campaign123', // Example campaign name
+        Offer_Code__c = 'OFFER001', // Example Offer Code
+        Offer_Priority__c = 1 // Example Offer Priority
+        // Add more fields as needed
+    );
+    insert campaign;
+
+    // Call the method being tested
+    List<vfClientOffer> offers = YourClassName.getOpenClientOffers('123456789'); // Pass the SSN used in the test data
+
+    // Perform assertions
+    System.assertEquals(1, offers.size()); // Assuming only one offer is returned based on the mock data
+    vfClientOffer offer = offers[0];
+    System.assertEquals('OFFER001', offer.offerCode); // Verify offer code
+    System.assertEquals('Campaign123', offer.offerName); // Verify offer name
+    System.assertEquals(1, offer.offerPriority); // Verify offer priority
+    System.assertEquals(80, offer.offerScore); // Verify offer score
+    System.assertEquals('Plan123', offer.offerPlanId); // Verify offer plan ID
+    // Add more assertions as needed
+}
+
+
+
+
+
+
 private static List<vfClientOffer> getOpenClientOffers(String ssn) {
         List<vfClientOffer> vfClientOfferList = new List<vfClientOffer>();
         
