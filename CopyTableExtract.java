@@ -1,5 +1,40 @@
 @isTest
 static void testInitializeAndLoadPlanData() {
+    // Create a mock Account record
+    Account mockAccount = new Account(Name = 'Test Account'); // Example Account data
+    insert mockAccount;
+
+    // Create a mock CTI_Console_Pop__c record linked to the Account
+    CTI_Console_Pop__c mockCTIConsolePop = new CTI_Console_Pop__c(
+        Account__c = mockAccount.Id, // Link the CTI_Console_Pop__c record to the Account
+        CTI_Params__c = 'clientId:123456789; VRUAPP:Test Value' // Example CTI_Params__c value
+        // Add more fields as needed
+    );
+    insert mockCTIConsolePop;
+
+    // Create a mock Case record
+    Case mockCase = new Case(
+        AccountId = mockAccount.Id, // Link the Case record to the Account
+        Offers_Available__c = true // Example Offers_Available__c value
+        // Add more fields as needed
+    );
+    insert mockCase;
+
+    // Call the method being tested
+    List<UltimatePopControllerHelper.SearchResult> results = YourClassName.initializeAndLoadPlanData(mockAccount.Id);
+
+    // Perform assertions
+    System.assertNotEquals(null, results); // Ensure that results are not null
+    // Add more assertions as needed
+}
+
+
+
+
+
+
+@isTest
+static void testInitializeAndLoadPlanData() {
     // Create a mock CTI_Console_Pop__c record
     CTI_Console_Pop__c mockCTIConsolePop = new CTI_Console_Pop__c(
         Account__c = '001XXXXXXXXXXXX', // Example Account Id
