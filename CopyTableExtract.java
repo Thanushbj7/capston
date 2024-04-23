@@ -1,3 +1,35 @@
+@isTest
+static void testInitializeAndLoadPlanData() {
+    // Create a mock CTI_Console_Pop__c record
+    CTI_Console_Pop__c mockCTIConsolePop = new CTI_Console_Pop__c(
+        Account__c = '001XXXXXXXXXXXX', // Example Account Id
+        CTI_Params__c = 'clientId:123456789; VRUAPP:Test Value', // Example CTI_Params__c value
+        // Add more fields as needed
+    );
+    insert mockCTIConsolePop;
+
+    // Create a mock Case record
+    Case mockCase = new Case(
+        Id = '001XXXXXXXXXXXX', // Example Case Id
+        Offers_Available__c = true // Example Offers_Available__c value
+        // Add more fields as needed
+    );
+    insert mockCase;
+
+    // Call the method being tested
+    List<UltimatePopControllerHelper.SearchResult> results = YourClassName.initializeAndLoadPlanData(mockCTIConsolePop.Account__c);
+
+    // Perform assertions
+    System.assertNotEquals(null, results); // Ensure that results are not null
+    // Add more assertions as needed
+}
+
+
+
+
+
+
+
 public static List<UltimatePopControllerHelper.SearchResult> initializeAndLoadPlanData(String clientId){
     Case currentCase = new Case();
     system.debug('Acc Id '+clientId);
