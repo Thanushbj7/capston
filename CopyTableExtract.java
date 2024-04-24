@@ -1,3 +1,72 @@
+// Example usage
+String pageType = ApexPages.currentPage().getParameters().get('pageType');
+String profileName = 'Example Profile Name';
+String planId = ApexPages.currentPage().getParameters().get('planId');
+String paagId = ApexPages.currentPage().getParameters().get('paagID');
+String planNumber = ApexPages.currentPage().getParameters().get('planNumber');
+String planName = ApexPages.currentPage().getParameters().get('planName');
+String market = ApexPages.currentPage().getParameters().get('market');
+
+initializeArticleEditSuggestPlan(pageType, profileName, planId, paagId, planNumber, planName, market);
+
+
+
+
+public void initializeArticleEditSuggestPlan(String pageType, String profileName, String planId, String paagId, String planNumber, String planName, String market) {
+    Case articleCase = new Case();
+    
+    this.pageType = pageType;
+    this.profileName = profileName;
+    System.debug('pageType: ' + this.pageType);
+    
+    if (this.pageType != null && this.pageType == 'PAAG') {
+        RecordType caseRecType = [SELECT Id, Name, SobjectType FROM RecordType WHERE SObjectType = 'Case' AND Name = 'PAAG Modification Request' LIMIT 1];
+        articleCase.RecordTypeId = caseRecType.Id;
+        this.planID = planId;
+        System.debug('planId: ' + this.planID);
+        System.debug('paagID: ' + paagId);
+        this.planNumber = planNumber;
+        System.debug('planNumber: ' + this.planNumber);
+        this.planName = planName;
+        this.market = market;
+        
+        System.debug('planName: ' + this.planName);
+        articleCase.Plan_ID__c = this.planID;
+        articleCase.Subject = 'PAAG Edit Request';
+        articleCase.Article_Url__c = 'https://' + ApexPages.currentPage().getHeaders().get('Host') + '/' + paagId;
+        articleCase.Market__c = this.market;
+        this.queueName = 'PAAG & Article Edit Request Queue';
+    } else {
+        RecordType caseRecType = [SELECT Id, Name, SobjectType FROM RecordType WHERE SObjectType = 'Case' AND Name = 'CCC KM Article Update Request' LIMIT 1];
+        articleCase.RecordTypeId = caseRecType.Id;
+        // articleCase.Article_Url__c = ApexPages.currentPage().getParameters().get('articleUrl');
+        articleCase.Article_Name__c = planName;
+        System.debug('Article Name: ' + articleCase.Article_Name__c);
+        String articleType =  ApexPages.currentPage().getParameters().get('articleType');
+        System.debug('Article Type: ' + articleType);
+        if ('Job_Aid__kav'.equals(articleType)) {
+            this.queueName = 'Job Aid Article Edit Queue';
+            articleCase.Subject = 'Job Aid Edit Request';
+        } else {
+            this.queueName = 'PAAG & Article Edit Request Queue';
+            articleCase.Subject = 'Plan Article Edit Request';
+        }
+        articleType = articleType.substring(0, articleType.length() - 5);
+        articleCase.Article_Type__c = articleType;
+        articleCase.Article_Url__c = 'https://' + ApexPages.currentPage().getHeaders().get('Host') + '/articles/' + articleType + '/' + articleCase.Article_Name__c;
+    }
+    articleCase.Status = 'New';
+    ApexPages.currentPage().getHeaders().put('X-UA-Compatible', 'IE=edge');
+}
+
+
+
+
+
+
+
+
+
 public void initializeArticleEditSuggestPlan() {
     Case articleCase = new Case();
     
