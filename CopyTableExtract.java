@@ -1,13 +1,4 @@
-/*
-#############################################################################
-# Name ............................: ArticleEditSuggestController	        			     	                    
-# Created by.................: Srinivas Yellapantula			                    
-# Created Date..............: 12/3/2014                                  
-# Description.................:   
-#############################################################################
 
-@Edited Yannis Lam 07/08/2019
-*/
 
 public with sharing class ArticleEditSuggestController {
     public ApexPages.StandardController controller; 
