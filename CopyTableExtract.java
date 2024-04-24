@@ -1,7 +1,7 @@
 public ArcticleEditSuggestPlanController() {
         //this.articleCase = new Case();
          Case articleCase=new Case();
-         system.debug('pageType===================================================================================='+ articleCase);
+        
      	pageType =  ApexPages.currentPage().getParameters().get('pageType');
      	Profile p = [Select Name from Profile where Id =: userinfo.getProfileid()];
 		profileName = p.name;
