@@ -1,3 +1,36 @@
+public class ArticleEditSuggestController {
+    @AuraEnabled public ApexPages.StandardController controller; 
+    @AuraEnabled public Case articleCase{get;set;}
+    @AuraEnabled public Attachment caseAttachment{get;set;}
+    @AuraEnabled public String fileName{get;set;} 
+    @AuraEnabled public transient Blob fileBody{get;set;}
+    @AuraEnabled public String queueName{get;set;}
+    @AuraEnabled public String planID{get;set;}
+    @AuraEnabled public String planName{get;set;}
+    @AuraEnabled public String planNumber{get;set;}
+    @AuraEnabled public String pageType{get;set;}
+    @AuraEnabled public String market{get;set;}
+    @AuraEnabled public boolean formSaved{get;set;}
+    @AuraEnabled public String profileName{get;set;}
+
+    @AuraEnabled
+    public ArticleEditSuggestController(ApexPages.StandardController con){
+        // Constructor logic...
+    }
+
+    @AuraEnabled
+    public PageReference save(){
+        // Save method logic...
+    }
+}
+
+
+
+
+
+
+
+
 
 
 public with sharing class ArticleEditSuggestController {
