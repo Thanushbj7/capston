@@ -1,115 +1,100 @@
-@isTest
-static void testInitializeAndLoadPlanData() {
-    // Create a mock Account record
-    Account mockAccount = new Account(Name = 'Test Account'); // Example Account data
-    insert mockAccount;
+/*
+#############################################################################
+# Name ............................: ArticleEditSuggestController	        			     	                    
+# Created by.................: Srinivas Yellapantula			                    
+# Created Date..............: 12/3/2014                                  
+# Description.................:   
+#############################################################################
 
-    // Create a mock CTI_Console_Pop__c record linked to the Account
-    CTI_Console_Pop__c mockCTIConsolePop = new CTI_Console_Pop__c(
-        Account__c = mockAccount.Id, // Link the CTI_Console_Pop__c record to the Account
-        CTI_Params__c = 'clientId:123456789; VRUAPP:Test Value' // Example CTI_Params__c value
-        // Add more fields as needed
-    );
-    insert mockCTIConsolePop;
+@Edited Yannis Lam 07/08/2019
+*/
 
-    // Create a mock Case record
-    Case mockCase = new Case(
-        AccountId = mockAccount.Id, // Link the Case record to the Account
-        Offers_Available__c = true // Example Offers_Available__c value
-        // Add more fields as needed
-    );
-    insert mockCase;
-
-    // Call the method being tested
-    List<UltimatePopControllerHelper.SearchResult> results = YourClassName.initializeAndLoadPlanData(mockAccount.Id);
-
-    // Perform assertions
-    System.assertNotEquals(null, results); // Ensure that results are not null
-    // Add more assertions as needed
-}
-
-
-
-
-
-
-@isTest
-static void testInitializeAndLoadPlanData() {
-    // Create a mock CTI_Console_Pop__c record
-    CTI_Console_Pop__c mockCTIConsolePop = new CTI_Console_Pop__c(
-        Account__c = '001XXXXXXXXXXXX', // Example Account Id
-        CTI_Params__c = 'clientId:123456789; VRUAPP:Test Value', // Example CTI_Params__c value
-        // Add more fields as needed
-    );
-    insert mockCTIConsolePop;
-
-    // Create a mock Case record
-    Case mockCase = new Case(
-        Id = '001XXXXXXXXXXXX', // Example Case Id
-        Offers_Available__c = true // Example Offers_Available__c value
-        // Add more fields as needed
-    );
-    insert mockCase;
-
-    // Call the method being tested
-    List<UltimatePopControllerHelper.SearchResult> results = YourClassName.initializeAndLoadPlanData(mockCTIConsolePop.Account__c);
-
-    // Perform assertions
-    System.assertNotEquals(null, results); // Ensure that results are not null
-    // Add more assertions as needed
-}
-
-
-
-
-
-
-
-public static List<UltimatePopControllerHelper.SearchResult> initializeAndLoadPlanData(String clientId){
-    Case currentCase = new Case();
-    system.debug('Acc Id '+clientId);
-	String clientSSN = '';
-	String test = '';
-
-   
+public with sharing class ArticleEditSuggestController {
+    public ApexPages.StandardController controller; 
+	public Case articleCase{get;set;}
+	public Attachment caseAttachment{get;set;}
+    public string fileName{get;set;} 
+	public transient Blob fileBody{get;set;}
+	public String queueName{get;set;}
+	public String planID{get;set;}
+	public String planName{get;set;}
+	public String planNumber{get;set;}
+	public String pageType{get;set;}
+	public String market{get;set;}
+	public boolean formSaved{get;set;}
+	public String profileName{get;set;}
+	
+    public ArticleEditSuggestController(ApexPages.StandardController con){
+        this.articleCase = new Case();
+     	pageType =  ApexPages.currentPage().getParameters().get('pageType');
+     	Profile p = [Select Name from Profile where Id =: userinfo.getProfileid()];
+		profileName = p.name;
+     	system.debug('pageType'+ pageType);
+     	if(pageType != null && pageType == 'PAAG'){
+     		RecordType caseRecType = [Select Id, Name, SobjectType from RecordType where (SobjectType ='Case') and (Name ='PAAG Modification Request') limit 1];
+       		articleCase.RecordTypeId = caseRecType.Id;
+     	 	planID = ApexPages.currentPage().getParameters().get('planId');
+     	 	system.debug('planId'+ planId);
+     	 	String paagId = ApexPages.currentPage().getParameters().get('paagID');
+     	 	system.debug('paagID'+ paagId);
+     	 	planNumber = ApexPages.currentPage().getParameters().get('planNumber');
+     	 	system.debug('planNumber'+ planNumber);
+     	 	planName = ApexPages.currentPage().getParameters().get('planName');
+     	 	market =  ApexPages.currentPage().getParameters().get('market');
+     	 	
+     	 	system.debug('planName'+ planName);
+     	 	articleCase.Plan_ID__c = planID;
+     	 	articleCase.subject = 'PAAG Edit Request';
+     	 	articleCase.Article_Url__c = 'https://' + ApexPages.currentPage().getHeaders().get('Host')+ '/' + paagId;
+     	 	articleCase.Market__c = market;
+     	 	queueName = 'PAAG & Article Edit Request Queue';
+     	}
+     	else {
+     	 	RecordType caseRecType = [Select Id, Name, SobjectType from RecordType where (SobjectType ='Case') and (Name ='CCC KM Article Update Request') limit 1];
+       		articleCase.RecordTypeId = caseRecType.Id;
+	    	//articleCase.Article_Url__c = ApexPages.currentPage().getParameters().get('articleUrl');
+	     	articleCase.Article_Name__c = ApexPages.currentPage().getParameters().get('articleName');
+	     	System.debug('Article Name' + articleCase.Article_Name__c);
+	     	String articleType =  ApexPages.currentPage().getParameters().get('articleType');
+	     	System.debug('Article Type' + articleType);
+	     	if('Job_Aid__kav'.equals(articleType)){
+	     		queueName = 'Job Aid Article Edit Queue';
+	     	 	articleCase.subject = 'Job Aid Edit Request';
+	     	}
+	     	else {
+	     	 	queueName = 'PAAG & Article Edit Request Queue';
+	     	 	articleCase.subject =  'Plan Article Edit Request';
+	     	}
+	     	articleType =  articleType.Substring(0, articleType.length()-5);
+	     	articleCase.Article_Type__c = articleType;     	
+	     	articleCase.Article_Url__c = 'https://' + ApexPages.currentPage().getHeaders().get('Host')+ '/articles/' + articleType + '/' + articleCase.Article_Name__c;
+     	}
+        articleCase.Status = 'New';
+     	Apexpages.currentPage().getHeaders().put('X-UA-Compatible', 'IE=edge');
+    }
     
-    CTI_Console_Pop__c  ctiConsolePop = [select Id, Account__r.SSN__c, CTI_Params__c, DC_Serialized_Result__c, Case__c, 
-        Case__r.Id, Case__r.CaseNumber, Offer_Pop__c, Offer_Pop__r.Id from CTI_Console_Pop__c 
-        where account__c = :clientId order by LastModifiedDate  desc limit 1];
-        String[] keyValuePairs = ctiConsolePop.CTI_Params__c.split(';');
-        for(String pair : keyValuePairs) {
-            String[] keyValue = pair.split(':');
-            if(keyValue.size() == 2) {
-                String key = keyValue[0].trim();
-                String value = keyValue[1].trim();
-        
-                if(key == 'clientId') {
-                    clientSSN = value;
-                } else if(key == 'VRUAPP') {
-                    test = value;
-                }
-            }
+    public pagereference save(){
+        User user = [select Id, Name, UserRole.Name  from User where id = :UserInfo.getUserId()];
+       	articleCase.User_Role__c = user.UserRole.Name;
+       	System.debug('QueueName' + queueName);
+        List<Group> groupList = [select Id from Group where Name = :queueName and Type = 'Queue'];
+        System.debug('Queue List Size' + groupList.size());
+        if(groupList.size() > 0){
+       		articleCase.OwnerId = groupList.get(0).Id;
         }
-        
-        System.debug('clientSSN: ' + clientSSN);
-        System.debug('test: ' + test);
-    Account client = UltimatePopControllerHelper.getSFDCClientInfo(ctiConsolePop.Account__r.SSN__c, true);
-    
-    List<Case> currentCaseList = [select Id, CaseNumber, Offers_Available__c from Case where Id = :ctiConsolePop.Case__r.Id];
-    if(currentCaseList != null && currentCaseList.size() > 0)
-        currentCase = currentCaseList.get(0);
-    	
-    String ctiParams = ctiConsolePop.CTI_Params__c;
-    CurCase=ctiConsolePop.Case__r.Id;
-    system.debug('=================================== ctiParams ' + ctiParams);
-   
-    
-    return initializeAvailablePlans(currentCase,clientSSN,test,client);
-    
-
-
-
-
-
-
+       
+        if(String.isBlank(articleCase.id))
+       		insert articleCase;
+       	if(fileBody != null){
+       		Attachment attachment  = new Attachment();
+	       	attachment.Body = fileBody;
+       	   	attachment.Name = fileName;
+	       	attachment.ParentId = articleCase.id;             
+	       	insert attachment; 
+       	}                
+       	fileBody = null;
+       	//pagereference pr = new pagereference('/'+articleCase.id);      
+       	formSaved = true;                     
+       	return null;
+    }
 }
