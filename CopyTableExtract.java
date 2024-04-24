@@ -1,3 +1,109 @@
+public with sharing class ArticleEditSuggestController {
+    @AuraEnabled(cacheable=true)
+    public static void initializeArticleEditSuggestPlan(String pageType, String planId, String paagID, String planNumber, String planName, String market) {
+        // Your initialization logic here...
+    }
+
+    @AuraEnabled
+    public static void save() {
+        // Save logic...
+    }
+}
+
+
+
+
+import { LightningElement, api, track } from 'lwc';
+
+export default class LwcComponent extends LightningElement {
+    @api pageType;
+    @api planNumber;
+    @api planName;
+    @api profileName;
+    @track articleCase = {};
+    @track fileName;
+    @track fileBody;
+    @track formSaved = false;
+
+    handlePsaChange(event) {
+        // Handle PAAG Section Applicable change
+    }
+
+    handleCommentsInput(event) {
+        // Handle comments input change
+        this.articleCase.Article_Comments__c = event.target.value;
+    }
+
+    handleEditRequestTypeChange(event) {
+        // Handle Edit Request Type change
+        this.articleCase.Edit_Request_Type__c = event.target.value;
+    }
+
+    handlePriorityChange(event) {
+        // Handle Priority change
+        this.articleCase.Priority = event.target.value;
+    }
+
+    handleFileChange(event) {
+        // Handle file input change
+        this.fileName = event.target.files[0].name;
+        this.fileBody = event.target.files[0];
+    }
+
+    save() {
+        // Perform save operation
+        // Call Apex method to save data
+        // Set this.formSaved = true; after successful save
+    }
+
+    closeTab() {
+        // Close tab logic
+    }
+}
+
+
+
+
+
+<template>
+    <div if:true={formSaved} style="font-weight:bold;margin-left:100px !important;margin-top:40px !important;">Change Request has been Submitted.</div>
+    <div if:false={formSaved}>
+        <div if:true={pageType === 'PAAG'}>
+            <div style="font-color:#4a4a56;padding-left:197px;">Plan</div>
+            <div style="padding-left:5px;">{planNumber}</div>
+            <div style="font-color:#4a4a56;padding-left:50px;">Plan Name</div>
+            <div style="padding-left:5px;">{planName}</div>
+        </div>
+        <div>Url: {articleCase.Article_Url__c}</div>
+        <template if:true={pageType === 'PAAG'}>
+            <lightning-input type="checkbox" label="PAAG Section Applicable" onchange={handlePsaChange}></lightning-input>
+        </template>
+        <template if:true={articleCase.Article_Url__c}>
+            <div>Article Url: {articleCase.Article_Url__c}</div>
+        </template>
+        <div>Comments: <textarea value={articleCase.Article_Comments__c} oninput={handleCommentsInput}></textarea></div>
+        <template if:true={pageType !== 'PAAG'}>
+            <lightning-input label="Edit Request Type" value={articleCase.Edit_Request_Type__c} onchange={handleEditRequestTypeChange}></lightning-input>
+        </template>
+        <template if:true={profileName !== 'CSA'}>
+            <lightning-input label="Priority" value={articleCase.Priority} onchange={handlePriorityChange}></lightning-input>
+        </template>
+        <template if:true={profileName === 'CSA'}>
+            <div>Priority: {articleCase.Priority}</div>
+        </template>
+        <div>Attach File: <input type="file" onchange={handleFileChange}></div>
+    </div>
+    <div>
+        <lightning-button label="Save" onclick={save} variant="brand" if:false={formSaved}></lightning-button>
+        <lightning-button label="Cancel" onclick={closeTab} if:false={formSaved}></lightning-button>
+    </div>
+</template>
+
+
+
+
+
+
 <apex:page showHeader="false" sidebar="false"  standardController="Case" tabStyle="Account" standardStylesheets="true"  extensions="ArticleEditSuggestController">
  
 <apex:includeScript value="/support/console/40.0/integration.js"/>
