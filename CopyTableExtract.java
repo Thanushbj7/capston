@@ -1,3 +1,9 @@
+https://developer.salesforce.com/docs/component-library/bundle/lightning-dual-listbox/example
+
+
+
+
+
 public with sharing class ArticleEditSuggestController {
     @AuraEnabled(cacheable=true)
     public static void initializeArticleEditSuggestPlan(String pageType, String planId, String paagID, String planNumber, String planName, String market) {
