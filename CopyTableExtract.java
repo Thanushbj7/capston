@@ -1,5 +1,5 @@
-https://developer.salesforce.com/docs/component-library/bundle/lightning-dual-listbox/example
 
+https://trailhead.salesforce.com/trailblazer-community/feed/0D54V00007T4FbUSAV
 
 
 
