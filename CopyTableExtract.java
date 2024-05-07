@@ -1,3 +1,18 @@
+<!-- savrButton.html -->
+<template>
+    <lightning-input type="text" label="Type something" onchange={handleChange}></lightning-input>
+    <lightning-button 
+        label="Savr" 
+        class={isGrey ? 'grey-button' : 'blue-button'} 
+        onclick={handleClick}>
+    </lightning-button>
+</template>
+
+
+
+
+
+
 
 https://trailhead.salesforce.com/trailblazer-community/feed/0D54V00007T4FbUSAV
 
