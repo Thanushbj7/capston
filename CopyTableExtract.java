@@ -1,3 +1,13 @@
+https://www.forcetalks.com/blog/file-upload-in-lightning-web-component-lwc-all-you-need-to-know/
+
+
+
+
+
+
+
+
+
 <!-- savrButton.html -->
 <template>
     <lightning-input type="text" label="Type something" onchange={handleChange}></lightning-input>
