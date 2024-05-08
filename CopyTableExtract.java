@@ -1,7 +1,11 @@
+
+
+
+
 https://www.forcetalks.com/blog/file-upload-in-lightning-web-component-lwc-all-you-need-to-know/
 
 
-
+https://salesforce.stackexchange.com/questions/407281/upload-file-content-via-lwc-to-apex
 
 
 
