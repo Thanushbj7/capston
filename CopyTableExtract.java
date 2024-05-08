@@ -1,5 +1,5 @@
 
-
+https://www.salesforcetroop.com/custom_file_upload_using_lwc
 
 
 https://www.forcetalks.com/blog/file-upload-in-lightning-web-component-lwc-all-you-need-to-know/
