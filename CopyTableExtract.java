@@ -1,3 +1,36 @@
+// Assuming you have an HTML table with id "myTable" and the cell you want to add the dropdown to has id "dropdownCell"
+
+// Define the options for the dropdown list
+const options = ['Option 1', 'Option 2', 'Option 3'];
+
+// Get the cell where you want to add the dropdown list
+const dropdownCell = document.getElementById('dropdownCell');
+
+// Create a select element (dropdown list)
+const selectList = document.createElement('select');
+
+// Add options to the dropdown list dynamically
+options.forEach(option => {
+    const optionElement = document.createElement('option');
+    optionElement.text = option;
+    selectList.appendChild(optionElement);
+});
+
+// Append the dropdown list to the cell
+dropdownCell.appendChild(selectList);
+
+// Add the ">" symbol to the dropdown list
+const greaterThanSymbol = document.createElement('span');
+greaterThanSymbol.textContent = '>';
+greaterThanSymbol.classList.add('greater-than-symbol');
+dropdownCell.appendChild(greaterThanSymbol);
+
+
+
+
+
+
+
 
 https://www.salesforcetroop.com/custom_file_upload_using_lwc
 
