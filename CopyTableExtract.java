@@ -1,3 +1,15 @@
+if(this.selectedRepTIN != null && this.selectedRepTIN != '') {
+            RecordType producerRecType = [Select Id From RecordType Where sObjectType = 'Account' and Name = 'Producer' limit 1];
+            List<Account> producerObjList = [select Id from Account where Producer_SSN__c = :this.selectedRepTIN and RecordTypeId = :producerRecType.Id];
+            
+            if(producerObjList != null && producerObjList.size() > 0)
+                newOpp.Agent_Name__c = producerObjList[0].Id;
+        }
+
+
+
+
+
 // Assuming you have an HTML table with id "myTable" and the cell you want to add the dropdown to has id "dropdownCell"
 
 // Define the options for the dropdown list
