@@ -1,3 +1,125 @@
+@isTest
+public class OpportunityProcessorTest {
+    @isTest
+    static void testUpdateOpportunityWithAgent() {
+        // Create test data
+        RecordType producerRecType = new RecordType(
+            Name = 'Producer', 
+            sObjectType = 'Account', 
+            DeveloperName = 'Producer'
+        );
+        insert producerRecType;
+
+        Account producerAccount = new Account(
+            Name = 'Test Producer',
+            Producer_SSN__c = '123-45-6789',
+            RecordTypeId = producerRecType.Id
+        );
+        insert producerAccount;
+
+        Opportunity newOpp = new Opportunity(
+            Name = 'Test Opportunity',
+            CloseDate = Date.today(),
+            StageName = 'Prospecting'
+        );
+
+        // Initialize OpportunityProcessor
+        OpportunityProcessor processor = new OpportunityProcessor();
+        processor.selectedRepTIN = '123-45-6789';
+        processor.newOpp = newOpp;
+
+        // Invoke the method
+        Test.startTest();
+        processor.updateOpportunityWithAgent();
+        Test.stopTest();
+
+        // Verify the result
+        System.assertEquals(producerAccount.Id, processor.newOpp.Agent_Name__c, 'The Agent_Name__c field should be set correctly');
+    }
+
+    @isTest
+    static void testUpdateOpportunityWithAgent_NoMatch() {
+        // Create test data
+        RecordType producerRecType = new RecordType(
+            Name = 'Producer', 
+            sObjectType = 'Account', 
+            DeveloperName = 'Producer'
+        );
+        insert producerRecType;
+
+        Opportunity newOpp = new Opportunity(
+            Name = 'Test Opportunity',
+            CloseDate = Date.today(),
+            StageName = 'Prospecting'
+        );
+
+        // Initialize OpportunityProcessor
+        OpportunityProcessor processor = new OpportunityProcessor();
+        processor.selectedRepTIN = '000-00-0000'; // No matching account
+        processor.newOpp = newOpp;
+
+        // Invoke the method
+        Test.startTest();
+        processor.updateOpportunityWithAgent();
+        Test.stopTest();
+
+        // Verify the result
+        System.assertEquals(null, processor.newOpp.Agent_Name__c, 'The Agent_Name__c field should be null when no matching account is found');
+    }
+
+    @isTest
+    static void testUpdateOpportunityWithAgent_NullTIN() {
+        // Create test data
+        Opportunity newOpp = new Opportunity(
+            Name = 'Test Opportunity',
+            CloseDate = Date.today(),
+            StageName = 'Prospecting'
+        );
+
+        // Initialize OpportunityProcessor
+        OpportunityProcessor processor = new OpportunityProcessor();
+        processor.selectedRepTIN = null; // Null TIN
+        processor.newOpp = newOpp;
+
+        // Invoke the method
+        Test.startTest();
+        processor.updateOpportunityWithAgent();
+        Test.stopTest();
+
+        // Verify the result
+        System.assertEquals(null, processor.newOpp.Agent_Name__c, 'The Agent_Name__c field should be null when selectedRepTIN is null');
+    }
+
+    @isTest
+    static void testUpdateOpportunityWithAgent_EmptyTIN() {
+        // Create test data
+        Opportunity newOpp = new Opportunity(
+            Name = 'Test Opportunity',
+            CloseDate = Date.today(),
+            StageName = 'Prospecting'
+        );
+
+        // Initialize OpportunityProcessor
+        OpportunityProcessor processor = new OpportunityProcessor();
+        processor.selectedRepTIN = ''; // Empty TIN
+        processor.newOpp = newOpp;
+
+        // Invoke the method
+        Test.startTest();
+        processor.updateOpportunityWithAgent();
+        Test.stopTest();
+
+        // Verify the result
+        System.assertEquals(null, processor.newOpp.Agent_Name__c, 'The Agent_Name__c field should be null when selectedRepTIN is empty');
+    }
+}
+
+
+
+
+
+
+
 if(this.selectedRepTIN != null && this.selectedRepTIN != '') {
             RecordType producerRecType = [Select Id From RecordType Where sObjectType = 'Account' and Name = 'Producer' limit 1];
             List<Account> producerObjList = [select Id from Account where Producer_SSN__c = :this.selectedRepTIN and RecordTypeId = :producerRecType.Id];
