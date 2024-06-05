@@ -1,4 +1,121 @@
 @isTest
+private class RolloverStrategyTrigger_Test {
+    
+    @isTest
+    static void RolloverStrategyTriggerTest() {
+        User testUser = TestUtilsSBR.createUser('System Administrator');  
+        System.runAs(testUser) {
+
+            // Getting Client RecordType ID
+            String clientRecTypeId = Schema.SObjectType.Account.RecordTypeInfosByName.get('Client').RecordTypeId;
+            system.debug('###clientRecTypeId: ' + clientRecTypeId);
+
+            // Creating Test Account record
+            Account accObj = new Account(
+                firstName = 'TestFirstName',
+                lastName = 'TestLastName',
+                ssn__c = '112131415',
+                RecordTypeId = clientRecTypeId,
+                PersonMailingCity = 'TestCity',
+                PersonMailingState = 'TestState',
+                Batch_Id__c = '123',
+                ING_Alternate_User_Guest__c = 'TestGuest'
+            );
+            insert accObj;
+
+            system.assertEquals('TestState', accObj.PersonMailingState);
+            system.assertNotEquals('', accObj.RecordTypeId);
+            system.debug('###accObj.RecordTypeId: ' + accObj.RecordTypeId);
+
+            // Creating Test Plan record
+            Plan__c planObj = new Plan__c(name = 'TestPlan', Producer_TIN_ist__c = '121231234');
+            insert planObj;
+
+            // Creating Test Opportunity record
+            Opportunity oppObj = new Opportunity(
+                Outbound_Lead__c = '',
+                name = 'TestOpportunity',
+                Opportunity_Status__c = 'Closed - Won',
+                leadsource = 'TestSource',
+                stagename = 'TestStage',
+                closedate = Date.today(),
+                plan__c = planObj.id,
+                at_Risk__c = 12345,
+                AccountId = accObj.Id
+            );
+            insert oppObj;
+
+            DateTime dt = System.now();
+
+            // Creating Test Extended_Authentication__c record
+            Extended_Authentication__c extAuthObj = new Extended_Authentication__c(
+                Auth_Begin_Date__c = dt,
+                Auth_Expire_Date__c = dt,
+                Client__c = accObj.Id
+            );
+            insert extAuthObj;
+
+            // Performing DML Operations on Rollover_Strategy__c object
+            Test.startTest();
+            Rollover_Strategy__c rollOvrStrtgyObj = new Rollover_Strategy__c(Opportunity__c = oppObj.Id);
+            insert rollOvrStrtgyObj;
+
+            // Assertions after insert
+            Rollover_Strategy__c insertedRollOvrStrtgy = [SELECT Id, Opportunity__c FROM Rollover_Strategy__c WHERE Id = :rollOvrStrtgyObj.Id];
+            system.assertNotEquals(null, insertedRollOvrStrtgy.Id, 'Rollover Strategy should be inserted.');
+            system.assertEquals(oppObj.Id, insertedRollOvrStrtgy.Opportunity__c, 'Opportunity should be associated with Rollover Strategy.');
+
+            // Update rollOvrStrtgyObj
+            rollOvrStrtgyObj.Code_Verified__c = true;
+            rollOvrStrtgyObj.Consent_Status__c = 'Yes';
+            update rollOvrStrtgyObj;
+
+            // Assertions after update
+            Rollover_Strategy__c updatedRollOvrStrtgy = [SELECT Id, Code_Verified__c, Consent_Status__c FROM Rollover_Strategy__c WHERE Id = :rollOvrStrtgyObj.Id];
+            system.assertEquals(true, updatedRollOvrStrtgy.Code_Verified__c, 'Code Verified should be updated.');
+            system.assertEquals('Yes', updatedRollOvrStrtgy.Consent_Status__c, 'Consent Status should be updated.');
+
+            // Delete rollOvrStrtgyObj
+            delete rollOvrStrtgyObj;
+
+            // Assertions after delete
+            Boolean isDeleted = [SELECT IsDeleted FROM Rollover_Strategy__c WHERE Id = :rollOvrStrtgyObj.Id ALL ROWS];
+            system.assertEquals(true, isDeleted, 'Rollover Strategy should be deleted.');
+
+            // Undelete rollOvrStrtgyObj
+            undelete rollOvrStrtgyObj;
+
+            // Assertions after undelete
+            Rollover_Strategy__c undeletedRollOvrStrtgy = [SELECT Id, IsDeleted FROM Rollover_Strategy__c WHERE Id = :rollOvrStrtgyObj.Id];
+            system.assertEquals(false, undeletedRollOvrStrtgy.IsDeleted, 'Rollover Strategy should be undeleted.');
+
+            // Covering remaining methods and variables of RolloverStrategyTriggerHandler
+            RolloverStrategyTriggerHandler rollOvrStrtgyHandlrObj = new RolloverStrategyTriggerHandler(true, 10);
+
+            rollOvrStrtgyHandlrObj.isBefore = true;
+            rollOvrStrtgyHandlrObj.isAfter = true;
+            rollOvrStrtgyHandlrObj.isInsert = true;
+            rollOvrStrtgyHandlrObj.isUpdate = true;
+
+            system.debug('###IsVisualforcePageContext: ' + rollOvrStrtgyHandlrObj.IsVisualforcePageContext);
+            system.debug('###IsWebServiceContext: ' + rollOvrStrtgyHandlrObj.IsWebServiceContext);
+            system.debug('###IsExecuteAnonymousContext: ' + rollOvrStrtgyHandlrObj.IsExecuteAnonymousContext);
+
+            Test.stopTest();
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+@isTest
 private class RolloverStrategyTrigger_Test
 {    
     static testMethod void RolloverStrategyTriggerTest()
