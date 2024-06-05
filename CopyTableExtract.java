@@ -1,3 +1,8 @@
+Illegal assignment from List<Rollover_Strategy__c> to Boolean
+
+
+
+
 @isTest
 private class RolloverStrategyTrigger_Test {
     
