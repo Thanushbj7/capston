@@ -1,4 +1,139 @@
 @isTest
+private class RolloverStrategyTrigger_Test
+{    
+    static testMethod void RolloverStrategyTriggerTest()
+    {
+        User testUser = TestUtilsSBR.createUser('System Administrator');  
+        System.runAs(testUser)
+        {
+
+        //RecordType[] rt =[Select Id, IsPersonType, Name, SobjectType from RecordType where  SobjectType ='Account' and Name ='Client' and IsPersonType = true];
+        
+        //Getting Client RecordType ID
+        String clientRecTypeId = Schema.SObjectType.Account.RecordTypeInfosByName.get('Client').RecordTypeId;
+        system.debug('###clientRecTypeId'+clientRecTypeId);
+        //Creating Test Account record
+        Account accObj = new Account(firstName='null',lastName = 'test',ssn__c = '112131415', RecordTypeId = clientRecTypeId, PersonMailingCity = 'test', PersonMailingState = 'test', Batch_Id__c  = '123',ING_Alternate_User_Guest__c ='test');
+        insert accObj;
+        
+        system.assertEquals(accObj.PersonMailingState,'test');
+        system.assertNotEquals(accObj.RecordTypeId,'');
+        system.debug('###accObj.RecordTypeId'+accObj.RecordTypeId);
+
+        //Creating Test Plan record
+        Plan__c planObj = new Plan__c(name='tktestplan', Producer_TIN_ist__c='121231234');
+        insert planObj;
+
+        //Creating Test Opportunity record
+        Opportunity oppObj = new Opportunity(Outbound_Lead__c='',name='tktest_111111111',Opportunity_Status__c='Closed - Won',leadsource='test',stagename='test',closedate=Date.today(), plan__c=planObj.id, at_Risk__c=12345,Account=accObj);
+        insert oppObj;
+        
+        DateTime dt = System.now();
+        
+        //Creating Test Extended_Authentication__c record
+        Extended_Authentication__c extAuthObj = new Extended_Authentication__c(Auth_Begin_Date__c=dt, Auth_Expire_Date__c=dt, Client__c=accObj.Id);
+        
+        insert extAuthObj;
+
+        //Performing DML Operations on Rollover_Strategy__c object
+        Test.startTest();
+        Rollover_Strategy__c rollOvrStrtgyObj= new Rollover_Strategy__c();
+        rollOvrStrtgyObj.Opportunity__c = oppObj.Id;
+        insert rollOvrStrtgyObj;
+        
+        if(rollOvrStrtgyObj.Code_Verified__c != true)
+        rollOvrStrtgyObj.Code_Verified__c = true;
+        else
+        rollOvrStrtgyObj.Code_Verified__c = false;
+        rollOvrStrtgyObj.Consent_Status__c = 'Yes';
+        
+        update rollOvrStrtgyObj;
+        
+        rollOvrStrtgyObj.Consent_Status__c = 'No';
+        update rollOvrStrtgyObj;
+        
+        rollOvrStrtgyObj.Consent_Status__c = 'Yes';
+        update rollOvrStrtgyObj;
+        
+        delete rollOvrStrtgyObj;
+        
+        undelete rollOvrStrtgyObj;
+        
+        //Covering remaining methods and variables of RolloverStrategyTriggerHandler
+        RolloverStrategyTriggerHandler rollOvrStrtgyHandlrObj= new RolloverStrategyTriggerHandler(true,10);
+        
+        rollOvrStrtgyHandlrObj.isBefore = true;
+        rollOvrStrtgyHandlrObj.isAfter = true;
+        rollOvrStrtgyHandlrObj.isInsert = true;
+        rollOvrStrtgyHandlrObj.isUpdate = true;
+        
+        system.debug('###IsVisualforcePageContext'+rollOvrStrtgyHandlrObj.IsVisualforcePageContext);
+        system.debug('###IsWebServiceContext'+rollOvrStrtgyHandlrObj.IsWebServiceContext);
+        system.debug('###IsExecuteAnonymousContext'+rollOvrStrtgyHandlrObj.IsExecuteAnonymousContext);
+        
+        Test.stopTest();
+    }
+    
+    }
+}
+
+
+
+
+
+
+
+
+/*
+ * @author : Deshraj Kumawat
+ * @version : 1.0
+ * @date: 01/26/2016
+ */
+trigger RolloverStrategyTrigger on Rollover_Strategy__c (before insert, before update) {
+    
+    RolloverStrategyTriggerHandler handler = new RolloverStrategyTriggerHandler(Trigger.isExecuting, Trigger.size);
+    
+    //set trigger event type variable
+	handler.isBefore = Trigger.isBefore;
+	handler.isAfter = Trigger.isAfter;
+	
+	handler.isInsert = Trigger.isInsert;
+	handler.isUpdate = Trigger.isUpdate;
+	
+	if(Trigger.isInsert && Trigger.isBefore){
+		handler.OnBeforeInsert(Trigger.new);
+	}
+	else if(Trigger.isInsert && Trigger.isAfter){
+		//handler.OnAfterInsert(Trigger.new);
+	}
+	else if(Trigger.isUpdate && Trigger.isBefore){
+		handler.OnBeforeUpdate(Trigger.new, Trigger.old, Trigger.newMap, Trigger.oldMap);
+	}
+	else if(Trigger.isUpdate && Trigger.isAfter){
+		//handler.OnAfterUpdate(Trigger.new, Trigger.old, Trigger.newMap, Trigger.oldMap);
+	}
+	else if(Trigger.isDelete && Trigger.isBefore){
+		//handler.OnBeforeDelete(Trigger.old, Trigger.oldMap);
+	}
+	else if(Trigger.isDelete && Trigger.isAfter){
+		//handler.OnAfterDelete(Trigger.old, Trigger.oldMap);
+	}
+	else if(Trigger.isUnDelete){
+		//handler.OnUndelete(Trigger.new);	
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+@isTest
 public class OpportunityProcessorTest {
     @isTest
     static void testUpdateOpportunityWithAgent() {
