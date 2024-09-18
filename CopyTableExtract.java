@@ -1,4 +1,60 @@
 trigger CaseActionTrigger on CaseAction__c (after insert, after update, after delete, after undelete) {
+    Set<Id> caseIds = new Set<Id>();
+
+    // Collect related Case Ids from inserted, updated, or deleted CaseAction records
+    if(Trigger.isInsert || Trigger.isUpdate || Trigger.isUndelete) {
+        for (CaseAction__c ca : Trigger.new) {
+            if (ca.Case__c != null) {
+                caseIds.add(ca.Case__c);
+            }
+        }
+    }
+    if (Trigger.isDelete) {
+        for (CaseAction__c ca : Trigger.old) {
+            if (ca.Case__c != null) {
+                caseIds.add(ca.Case__c);
+            }
+        }
+    }
+
+    if (!caseIds.isEmpty()) {
+        // Aggregate the total count of CaseAction records per Case
+        List<AggregateResult> caseActionCount = [SELECT Case__c, COUNT(Id) totalCount
+                                                 FROM CaseAction__c
+                                                 WHERE Case__c IN :caseIds
+                                                 GROUP BY Case__c];
+
+        // Map to hold CaseId to count of CaseActions
+        Map<Id, Integer> caseActionMap = new Map<Id, Integer>();
+
+        // Populate the map with the CaseId and count of CaseActions
+        for (AggregateResult ar : caseActionCount) {
+            caseActionMap.put((Id) ar.get('Case__c'), (Integer) ar.get('totalCount'));
+        }
+
+        // Fetch the cases and update the 'Count_Using_Trigger__c' field with the count
+        List<Case> casesToUpdate = new List<Case>();
+        for (Id caseId : caseIds) {
+            Case caseToUpdate = new Case(Id = caseId);
+            caseToUpdate.Count_Using_Trigger__c = caseActionMap.containsKey(caseId) ? caseActionMap.get(caseId) : 0;
+            casesToUpdate.add(caseToUpdate);
+        }
+
+        // Perform DML update outside of loops
+        if (!casesToUpdate.isEmpty()) {
+            update casesToUpdate;
+        }
+    }
+}
+
+
+
+
+
+
+
+
+trigger CaseActionTrigger on CaseAction__c (after insert, after update, after delete, after undelete) {
 
     Set<Id> caseIds = new Set<Id>();
 
