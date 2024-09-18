@@ -1,3 +1,57 @@
+trigger CaseActionTrigger on CaseAction__c (after insert, after update, after delete, after undelete) {
+
+    Set<Id> caseIds = new Set<Id>();
+
+    // Collect related Case Ids from inserted, updated, or deleted CaseAction records
+    if(Trigger.isInsert || Trigger.isUpdate || Trigger.isUndelete) {
+        for (CaseAction__c ca : Trigger.new) {
+            if (ca.Case__c != null) {
+                caseIds.add(ca.Case__c);
+            }
+        }
+    }
+    if (Trigger.isDelete) {
+        for (CaseAction__c ca : Trigger.old) {
+            if (ca.Case__c != null) {
+                caseIds.add(ca.Case__c);
+            }
+        }
+    }
+
+    if (caseIds.size() > 0) {
+        // Aggregate the total count of CaseAction records per Case
+        List<AggregateResult> caseActionCount = [SELECT Case__c, COUNT(Id) totalCount
+                                                 FROM CaseAction__c
+                                                 WHERE Case__c IN :caseIds
+                                                 GROUP BY Case__c];
+
+        // Map to hold CaseId to count of CaseActions
+        Map<Id, Integer> caseActionMap = new Map<Id, Integer>();
+
+        // Loop through the aggregation result and populate the map
+        for (AggregateResult ar : caseActionCount) {
+            caseActionMap.put((Id)ar.get('Case__c'), (Integer)ar.get('totalCount'));
+        }
+
+        // Fetch the cases and update the 'Count_Using_Trigger__c' field with the count
+        List<Case> casesToUpdate = [SELECT Id, Count_Using_Trigger__c FROM Case WHERE Id IN :caseIds];
+        for (Case c : casesToUpdate) {
+            c.Count_Using_Trigger__c = caseActionMap.containsKey(c.Id) ? caseActionMap.get(c.Id) : 0;
+        }
+
+        if (casesToUpdate.size() > 0) {
+            update casesToUpdate;
+        }
+    }
+}
+
+
+
+
+
+
+
+
 trigger UpdateCaseActionCount on CaseAction__c (after insert, after update, after delete, after undelete) {
 
     // Set to hold all Case IDs related to CaseActions
