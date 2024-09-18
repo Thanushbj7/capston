@@ -1,3 +1,61 @@
+trigger UpdateCaseActionCount on CaseAction__c (after insert, after update, after delete, after undelete) {
+
+    // Set to hold all Case IDs related to CaseActions
+    Set<Id> caseIds = new Set<Id>();
+
+    // Collect all Case IDs from the CaseAction records in Trigger.new/old (depending on context)
+    if (Trigger.isInsert || Trigger.isUpdate || Trigger.isUndelete) {
+        for (CaseAction__c caseAction : Trigger.new) {
+            caseIds.add(caseAction.Case__c);
+        }
+    }
+
+    if (Trigger.isDelete) {
+        for (CaseAction__c caseAction : Trigger.old) {
+            caseIds.add(caseAction.Case__c);
+        }
+    }
+
+    // Only run the query if there are Case IDs
+    if (!caseIds.isEmpty()) {
+        // Query the number of related CaseAction records for each Case
+        List<AggregateResult> caseActionCounts = [
+            SELECT Case__c, COUNT(Id) count
+            FROM CaseAction__c
+            WHERE Case__c IN :caseIds
+            GROUP BY Case__c
+        ];
+
+        // Map to hold the count of CaseAction records per Case
+        Map<Id, Integer> caseActionCountMap = new Map<Id, Integer>();
+
+        // Store the Case Id and related CaseAction count in a map
+        for (AggregateResult ar : caseActionCounts) {
+            caseActionCountMap.put((Id) ar.get('Case__c'), (Integer) ar.get('expr0'));
+        }
+
+        // List to hold the cases to update
+        List<Case> casesToUpdate = new List<Case>();
+
+        // For each Case, update the 'Count Using Trigger' field
+        for (Id caseId : caseIds) {
+            Integer actionCount = caseActionCountMap.containsKey(caseId) ? caseActionCountMap.get(caseId) : 0;
+            Case caseRecord = new Case(
+                Id = caseId,
+                Count_Using_Trigger__c = actionCount
+            );
+            casesToUpdate.add(caseRecord);
+        }
+
+        // Update all the Case records with the new count
+        if (!casesToUpdate.isEmpty()) {
+            update casesToUpdate;
+        }
+    }
+}
+
+
+
 @isTest
 private class RolloverStrategyTrigger_Test {
     
