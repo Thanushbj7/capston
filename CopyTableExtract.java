@@ -1,3 +1,29 @@
+
+Here's a refined overall comment on your competencies, incorporating your recent experience:
+
+"I bring extensive experience in migrating Salesforce Classic applications to Lightning, including service console applications. Leveraging technologies such as HTML, CSS, JavaScript, and Apex, I ensure seamless transitions while maintaining and enhancing application functionality. I develop flows and triggers based on specific requirements, and I ensure the quality of my work by writing comprehensive test cases for Apex classes. My technical expertise, combined with a focus on detail and user needs, enables me to deliver robust, scalable solutions."
+
+
+
+
+
+
+
+
+
+
+
+Here’s an overall comment you can use for your competencies section:
+
+"I demonstrate strong technical and problem-solving abilities in migrating and developing Salesforce Lightning applications, particularly in retirement plan management. I apply a deep understanding of Salesforce architecture, ensuring a smooth transition from Classic to Lightning while maintaining functionality and enhancing performance. My attention to detail in writing and executing test cases for Apex classes, flows, and triggers ensures high-quality deliverables. I am committed to delivering efficient, scalable, and user-friendly solutions that align with business requirements and drive operational effectiveness."
+
+
+
+
+
+
+
+
 trigger CaseActionTrigger on CaseAction__c (after insert, after update, after delete, after undelete) {
     Set<Id> caseIds = new Set<Id>();
 
