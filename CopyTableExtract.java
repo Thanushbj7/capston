@@ -1,3 +1,205 @@
+<div class="demo-only demo-only--sizing slds-grid slds-wrap slds-m-top_xx-small"> 
+											<table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-labelledby="element-with-table-label other-element-with-table-label">
+												<thead>
+												  <tr class="slds-line-height_reset">
+													<th class="" scope="col">
+														<div class="slds-truncate" title="Plan Ids">Plan Ids</div>
+													</th>
+													<th class="" scope="col">
+														<div class="slds-truncate" title="Call Activities">Call Activities</div>
+													  </th>
+													  <th class="" scope="col">
+														<div class="slds-truncate" title="Call Types">Call Types</div>
+													
+													  </th>
+													</tr>
+													</thead>
+													  <tbody>
+														
+														<template for:each={itemList} for:item="item" for:index="index">
+															<tr class="slds-hint-parent" key={item.id}>
+															
+																
+															<td data-label="Plan Ids">
+												
+														
+																<lightning-combobox name="planId"  value={planId} options={planIds} 
+																										onchange={handlePlanIdsChange} ></lightning-combobox>
+																<div class="error">{planIdError}</div>
+														
+												
+											</td>
+											<td data-label="Call Activities">
+												
+																<lightning-combobox name="callActivity"  value={callActivity} options={callActivitiesOptions}
+																										onchange={handlecallActivitiesChange} ></lightning-combobox>
+																<div class="error">{callActivityError}</div>
+														
+											</td>
+											<td data-label="Call Types">
+												
+																<lightning-combobox name="callType"  value={callType} options={callTypesOptions}
+																										onchange={handlecallTypesChange} ></lightning-combobox>
+																<div class="error">{callTypeError}</div>
+
+														
+											</td>
+										
+<td class="slds-cell_action-mode" role="gridcell">
+	<lightning-icon icon-name="action:new" access-key={item.id} id={index}
+	alternative-text="Add Row" size="small" title="Add Row" onclick={addRow}>
+</lightning-icon>
+&nbsp; &nbsp;
+<lightning-icon icon-name="action:delete" access-key={item.id} id={index}
+	alternative-text="Delete Row" size="small" title="Delete Row" onclick={removeRow}>
+</lightning-icon>
+</td>
+
+
+</tr>
+
+</template>
+    </tbody>
+</table>
+
+
+
+<div class="slds-m-top_small slds-m-horizontal_xxx-small">
+    <lightning-button variant="brand" label="Create Case Action" title="Create Case Action" onclick={onCreateCaseAction} class="slds-m-horizontal_x-small"></lightning-button>
+</div>
+
+</div>
+
+
+    keyIndex = 0;
+    @track itemList = [{
+        id: 0
+    }];
+
+    addRow() {
+        ++this.keyIndex;
+        var newItem = [{ id: this.keyIndex }];
+        this.itemList = this.itemList.concat(newItem);
+    }
+
+    removeRow(event) {
+        if (this.itemList.length >= 2) {
+            this.itemList = this.itemList.filter(function(element) {
+                return parseInt(element.id) !== parseInt(event.target.accessKey);
+            });
+        }
+    }
+
+async onCreateCaseAction() {
+
+
+        try {
+            //Validate Plan Ids
+            if (!this.planId) {
+                this.planIdError = 'Plan Id is required.';
+            } else {
+                this.planIdError = '';
+            }
+
+            //Validate Plan Ids
+            if (!this.callActivity) {
+                this.callActivityError = 'Call Activity is required.';
+            } else {
+                this.callActivityError = '';
+            }
+
+            //Validate Plan Ids
+            if (!this.callType) {
+                this.callTypeError = 'Call Type is required.';
+            } else {
+                this.callTypeError = '';
+            }
+
+            if (!this.callTypeError && !this.callActivityError && !this.planIdError) {
+
+                console.log('onCreateCaseAction recordid ', this.recordId)
+                const csId = await getCaseId({ clientId: this.recordId });
+                console.log('onCreateCaseAction csId', csId);
+
+                if (csId === null) {
+
+                    const NewcaseId = await createNewCase({ clientId: this.recordId, planId: this.planId, callActivity: this.callActivity, callType: this.callType })
+                    console.log('onCreateCase csId', NewcaseId);
+                    const res = await getCurrentCase({ Id: NewcaseId });
+                    console.log('nCreateCas res', res);
+                    if (res.length == 1) {
+                        this.caseNum = res[0].CaseNumber;
+
+                    }
+                    const caseActionId = await createCaseActions({ clientId: this.recordId, caseId: NewcaseId, planId: this.planId, callActivity: this.callActivity, callType: this.callType })
+                    const caseActionIdStr = JSON.stringify(caseActionId)
+                    let caseActionIdSet = [];
+                    caseActionIdSet.push(caseActionId);
+                    const caseActionToBeDisplayed = await getRelatedCaseActions({ caseId: NewcaseId, caseActionId: caseActionIdSet })
+                    let arrFinal = caseActionToBeDisplayed;
+                    console.log("onCreateCaseAction array: ", arrFinal);
+                    arrFinal = arrFinal.map(row => {
+                        return { PlanID_Text__c: row.PlanID_Text__c, Call_Activity__c: row.Call_Activity__c, Call_Type__c: row.Call_Type__c };
+
+                    });
+                    this.data = arrFinal;
+                    console.log("onCreateCaseAction final", arrFinal);
+                } else {
+
+
+                    console.log('onCreateCaseAction this.planId', this.planId);
+                    console.log('onCreateCaseAction this.callActivity', this.callActivity);
+                    console.log('onCreateCaseAction this.callType', this.callType);
+                    const caseActionId = await createCaseActions({ clientId: this.recordId, caseId: csId, planId: this.planId, callActivity: this.callActivity, callType: this.callType })
+
+                    console.log('onCreateCaseAction save : ' + caseActionId);
+                    const caseActionIdStr = JSON.stringify(caseActionId)
+                    console.log('onCreateCaseActionstr : ' + caseActionIdStr);
+
+                    let caseActionIdSet = [];
+                    caseActionIdSet.push(caseActionId);
+
+
+                    const caseActionToBeDisplayed = await getRelatedCaseActions({ caseId: csId, caseActionId: caseActionIdSet })
+                    console.log("onCreateCaseAction get ------: ", caseActionToBeDisplayed);
+
+
+                    //  this.caseActionList.push(caseActionToBeDisplayed);
+                    //  console.log("onCreateCaseAction list : ", this.caseActionList);
+
+                    let arrFinal = caseActionToBeDisplayed;
+
+                    console.log("onCreateCaseAction array: ", arrFinal);
+                    arrFinal = arrFinal.map(row => {
+
+                        return { PlanID_Text__c: row.PlanID_Text__c, Call_Activity__c: row.Call_Activity__c, Call_Type__c: row.Call_Type__c };
+
+                    });
+                    this.data = arrFinal;
+                    console.log("onCreateCaseAction final", arrFinal);
+                }
+                this.callType = '';
+                this.callActivity = '';
+                this.planId = '';
+            }
+        } catch (error) {
+            console.error(error);
+        }
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 keyIndex = 0;
 @track itemList = [
     {
