@@ -1,3 +1,124 @@
+keyIndex = 0;
+@track itemList = [
+    {
+        id: 0,
+        planId: '',
+        callActivity: '',
+        callType: '',
+        planIdError: '',
+        callActivityError: '',
+        callTypeError: ''
+    }
+];
+
+addRow() {
+    ++this.keyIndex;
+    const newItem = { id: this.keyIndex, planId: '', callActivity: '', callType: '' };
+    this.itemList = [...this.itemList, newItem];
+}
+
+removeRow(event) {
+    if (this.itemList.length > 1) {
+        this.itemList = this.itemList.filter(item => item.id !== parseInt(event.target.accessKey));
+    }
+}
+
+handlePlanIdsChange(event) {
+    const itemId = parseInt(event.target.dataset.id);
+    const newValue = event.target.value;
+    this.itemList = this.itemList.map(item => 
+        item.id === itemId ? { ...item, planId: newValue } : item
+    );
+}
+
+handlecallActivitiesChange(event) {
+    const itemId = parseInt(event.target.dataset.id);
+    const newValue = event.target.value;
+    this.itemList = this.itemList.map(item => 
+        item.id === itemId ? { ...item, callActivity: newValue } : item
+    );
+}
+
+handlecallTypesChange(event) {
+    const itemId = parseInt(event.target.dataset.id);
+    const newValue = event.target.value;
+    this.itemList = this.itemList.map(item => 
+        item.id === itemId ? { ...item, callType: newValue } : item
+    );
+}
+
+async onCreateCaseAction() {
+    try {
+        let isValid = true;
+        this.itemList = this.itemList.map(item => {
+            let planIdError = item.planId ? '' : 'Plan Id is required.';
+            let callActivityError = item.callActivity ? '' : 'Call Activity is required.';
+            let callTypeError = item.callType ? '' : 'Call Type is required.';
+            if (planIdError || callActivityError || callTypeError) {
+                isValid = false;
+            }
+            return { ...item, planIdError, callActivityError, callTypeError };
+        });
+
+        if (isValid) {
+            // Proceed with case creation logic
+        } else {
+            console.error("Validation failed");
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+
+
+
+
+
+
+
+
+<template for:each={itemList} for:item="item" for:index="index">
+    <tr class="slds-hint-parent" key={item.id}>
+        <td data-label="Plan Ids">
+            <lightning-combobox name="planId" value={item.planId} options={planIds} 
+                                onchange={handlePlanIdsChange} data-id={item.id}></lightning-combobox>
+            <div class="error">{item.planIdError}</div>
+        </td>
+        <td data-label="Call Activities">
+            <lightning-combobox name="callActivity" value={item.callActivity} options={callActivitiesOptions}
+                                onchange={handlecallActivitiesChange} data-id={item.id}></lightning-combobox>
+            <div class="error">{item.callActivityError}</div>
+        </td>
+        <td data-label="Call Types">
+            <lightning-combobox name="callType" value={item.callType} options={callTypesOptions}
+                                onchange={handlecallTypesChange} data-id={item.id}></lightning-combobox>
+            <div class="error">{item.callTypeError}</div>
+        </td>
+        <td class="slds-cell_action-mode" role="gridcell">
+            <lightning-icon icon-name="action:new" access-key={item.id} id={index}
+                            alternative-text="Add Row" size="small" title="Add Row" onclick={addRow}>
+            </lightning-icon>
+            &nbsp; &nbsp;
+            <lightning-icon icon-name="action:delete" access-key={item.id} id={index}
+                            alternative-text="Delete Row" size="small" title="Delete Row" onclick={removeRow}>
+            </lightning-icon>
+        </td>
+    </tr>
+</template>
+
+
+
+
+
+
+
+
+
+
+
+
+
 <div class="demo-only demo-only--sizing slds-grid slds-wrap slds-m-top_xx-small"> 
 											<table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-labelledby="element-with-table-label other-element-with-table-label">
 												<thead>
