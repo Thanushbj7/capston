@@ -1,4 +1,190 @@
 import { LightningElement, api, track, wire } from 'lwc';
+// Import your Apex methods and other necessary modules
+
+export default class CCCaseAction extends LightningElement {
+    @track columns = columns;
+    @track data = [];
+    @track itemList = [
+        {
+            id: 0,
+            planId: '',
+            callActivity: '',
+            callType: '',
+            planIdError: '',
+            callActivityError: '',
+            callTypeError: '',
+            callTypesOptions: []
+        }
+    ];
+    keyIndex = 0;
+
+    // Other variables and wire methods
+
+    addRow() {
+        ++this.keyIndex;
+        const newItem = {
+            id: this.keyIndex,
+            planId: '',
+            callActivity: '',
+            callType: '',
+            planIdError: '',
+            callActivityError: '',
+            callTypeError: '',
+            callTypesOptions: []
+        };
+        this.itemList = [...this.itemList, newItem];
+    }
+
+    removeRow(event) {
+        if (this.itemList.length > 1) {
+            const itemId = parseInt(event.target.accessKey);
+            this.itemList = this.itemList.filter(item => item.id !== itemId);
+        }
+    }
+
+    handlePlanIdsChange(event) {
+        const itemId = parseInt(event.target.dataset.id);
+        const newValue = event.target.value;
+        this.itemList = this.itemList.map(item => {
+            if (item.id === itemId) {
+                return { ...item, planId: newValue };
+            }
+            return item;
+        });
+    }
+
+    handlecallActivitiesChange(event) {
+        const itemId = parseInt(event.target.dataset.id);
+        const newValue = event.target.value;
+
+        let key = this.callTypesData.controllerValues[newValue];
+        let callTypesOptions = this.callTypesData.values.filter(opt => opt.validFor.includes(key));
+
+        this.itemList = this.itemList.map(item => {
+            if (item.id === itemId) {
+                return { 
+                    ...item, 
+                    callActivity: newValue,
+                    callTypesOptions
+                };
+            }
+            return item;
+        });
+    }
+
+    handlecallTypesChange(event) {
+        const itemId = parseInt(event.target.dataset.id);
+        const newValue = event.target.value;
+        this.itemList = this.itemList.map(item => {
+            if (item.id === itemId) {
+                return { ...item, callType: newValue };
+            }
+            return item;
+        });
+    }
+
+    async onCreateCaseAction() {
+        try {
+            let isValid = true;
+            // Validate each item
+            this.itemList = this.itemList.map(item => {
+                let planIdError = item.planId ? '' : 'Plan Id is required.';
+                let callActivityError = item.callActivity ? '' : 'Call Activity is required.';
+                let callTypeError = item.callType ? '' : 'Call Type is required.';
+                if (planIdError || callActivityError || callTypeError) {
+                    isValid = false;
+                }
+                return {
+                    ...item,
+                    planIdError,
+                    callActivityError,
+                    callTypeError
+                };
+            });
+
+            if (isValid) {
+                // Initialize data array
+                this.data = [];
+
+                for (const item of this.itemList) {
+                    await this.createCaseActionForItem(item);
+                }
+
+                // Clear the form
+                this.itemList = [
+                    {
+                        id: 0,
+                        planId: '',
+                        callActivity: '',
+                        callType: '',
+                        planIdError: '',
+                        callActivityError: '',
+                        callTypeError: '',
+                        callTypesOptions: []
+                    }
+                ];
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    async createCaseActionForItem(item) {
+        const { planId, callActivity, callType } = item;
+        const csId = await getCaseId({ clientId: this.recordId });
+        let caseId;
+        
+        if (!csId) {
+            const newCaseId = await createNewCase({ 
+                clientId: this.recordId, 
+                planId, 
+                callActivity, 
+                callType 
+            });
+            caseId = newCaseId;
+        } else {
+            caseId = csId;
+        }
+
+        // Create the case action
+        const caseActionId = await createCaseActions({ 
+            clientId: this.recordId, 
+            caseId, 
+            planId, 
+            callActivity, 
+            callType 
+        });
+
+        // Fetch and update the data for display
+        const caseActionToBeDisplayed = await getRelatedCaseActions({ 
+            caseId, 
+            caseActionIdSet: [caseActionId] 
+        });
+
+        let arrFinal = caseActionToBeDisplayed.map(row => ({
+            PlanID_Text__c: row.PlanID_Text__c,
+            Call_Activity__c: row.Call_Activity__c,
+            Call_Type__c: row.Call_Type__c
+        }));
+        this.data = [...this.data, ...arrFinal];
+    }
+
+    // Other methods and connectedCallback
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+import { LightningElement, api, track, wire } from 'lwc';
 import createCaseActions from '@salesforce/apex/lightningPopController.createCaseActions';
 import createNewCase from '@salesforce/apex/lightningPopController.createNewCase';
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
