@@ -1,3 +1,127 @@
+<template for:each={itemList} for:item="item" for:index="index">
+    <tr class="slds-hint-parent" key={item.id}>
+        <!-- Plan Id Combobox -->
+        <td data-label="Plan Ids">
+            <lightning-combobox 
+                name="planId" 
+                data-index={index}
+                value={item.planId} 
+                options={planIds} 
+                onchange={handlePlanIdsChange}>
+            </lightning-combobox>
+            <div class="error">{planIdError}</div>
+        </td>
+        
+        <!-- Call Activity Combobox -->
+        <td data-label="Call Activities">
+            <lightning-combobox 
+                name="callActivity" 
+                data-index={index}
+                value={item.callActivity} 
+                options={callActivitiesOptions} 
+                onchange={handlecallActivitiesChange}>
+            </lightning-combobox>
+            <div class="error">{callActivityError}</div>
+        </td>
+        
+        <!-- Call Type Combobox -->
+        <td data-label="Call Types">
+            <lightning-combobox 
+                name="callType" 
+                data-index={index}
+                value={item.callType} 
+                options={callTypesOptions} 
+                onchange={handlecallTypesChange}>
+            </lightning-combobox>
+            <div class="error">{callTypeError}</div>
+        </td>
+
+        <!-- Add and Delete Icons -->
+        <td class="slds-cell_action-mode" role="gridcell">
+            <!-- Add Row Icon -->
+            <lightning-icon 
+                icon-name="action:new" 
+                alternative-text="Add Row" 
+                size="small" 
+                title="Add Row" 
+                onclick={addRow}>
+            </lightning-icon>
+            &nbsp; &nbsp;
+            <!-- Delete Row Icon -->
+            <lightning-icon 
+                icon-name="action:delete" 
+                alternative-text="Delete Row" 
+                size="small" 
+                title="Delete Row" 
+                id={index} 
+                onclick={removeRow}>
+            </lightning-icon>
+        </td>
+    </tr>
+</template>
+
+
+
+
+
+
+
+
+import { LightningElement, track } from 'lwc';
+
+export default class CaseTrackingComponent extends LightningElement {
+    @track itemList = [
+        { id: 1, planId: '', callActivity: '', callType: '' } // Initial row data
+    ];
+
+    // Handle adding a new row
+    addRow(event) {
+        // Generate a unique ID for the new row
+        let newId = this.itemList.length + 1;
+        
+        // Push a new empty row object to itemList
+        this.itemList = [...this.itemList, {
+            id: newId,
+            planId: '',
+            callActivity: '',
+            callType: ''
+        }];
+    }
+
+    // Handle row removal
+    removeRow(event) {
+        const index = event.currentTarget.id;
+        this.itemList = this.itemList.filter((_, idx) => idx != index);
+    }
+
+    // Handle planId changes
+    handlePlanIdsChange(event) {
+        const index = event.target.dataset.index;
+        this.itemList[index].planId = event.detail.value;
+    }
+
+    // Handle callActivity changes
+    handlecallActivitiesChange(event) {
+        const index = event.target.dataset.index;
+        this.itemList[index].callActivity = event.detail.value;
+    }
+
+    // Handle callType changes
+    handlecallTypesChange(event) {
+        const index = event.target.dataset.index;
+        this.itemList[index].callType = event.detail.value;
+    }
+}
+
+
+
+
+
+
+
+
+
+
 import { LightningElement, api, track, wire } from 'lwc';
 // Import your Apex methods and other necessary modules
 
