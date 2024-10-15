@@ -1,5 +1,159 @@
 <template for:each={itemList} for:item="item" for:index="index">
     <tr class="slds-hint-parent" key={item.id}>
+        <td data-label="Plan Ids">
+            <lightning-combobox 
+                name="planId" 
+                value={item.planId} 
+                options={planIds} 
+                data-index={index} 
+                onchange={handlePlanIdsChange}>
+            </lightning-combobox>
+        </td>
+        <td data-label="Call Activities">
+            <lightning-combobox 
+                name="callActivity" 
+                value={item.callActivity} 
+                options={callActivitiesOptions} 
+                data-index={index} 
+                onchange={handlecallActivitiesChange}>
+            </lightning-combobox>
+        </td>
+        <td data-label="Call Types">
+            <lightning-combobox 
+                name="callType" 
+                value={item.callType} 
+                options={callTypesOptions} 
+                data-index={index} 
+                onchange={handlecallTypesChange}>
+            </lightning-combobox>
+        </td>
+        <td class="slds-cell_action-mode" role="gridcell">
+            <lightning-icon icon-name="action:new" 
+                            alternative-text="Add Row" 
+                            size="small" 
+                            title="Add Row" 
+                            onclick={addRow}>
+            </lightning-icon>
+            &nbsp; &nbsp;
+            <lightning-icon icon-name="action:delete" 
+                            alternative-text="Delete Row" 
+                            size="small" 
+                            title="Delete Row" 
+                            id={index} 
+                            onclick={removeRow}>
+            </lightning-icon>
+        </td>
+    </tr>
+</template>
+
+
+
+
+
+
+
+
+import { LightningElement, track } from 'lwc';
+
+export default class CaseActionComponent extends LightningElement {
+    // Tracking the list of rows
+    @track itemList = [
+        {
+            id: 0, // Unique identifier for each row
+            planId: '', // Initial empty values
+            callActivity: '',
+            callType: ''
+        }
+    ];
+
+    @track arrFinal = []; // Array to store final data
+    
+    planIds = [
+        { label: 'Plan A', value: 'PlanA' },
+        { label: 'Plan B', value: 'PlanB' }
+        // Add more options as needed
+    ];
+
+    callActivitiesOptions = [
+        { label: 'Activity A', value: 'ActivityA' },
+        { label: 'Activity B', value: 'ActivityB' }
+        // Add more options as needed
+    ];
+
+    callTypesOptions = [
+        { label: 'Type A', value: 'TypeA' },
+        { label: 'Type B', value: 'TypeB' }
+        // Add more options as needed
+    ];
+
+    // Function to handle adding a new row
+    addRow(event) {
+        const newId = this.itemList.length;
+        this.itemList = [
+            ...this.itemList,
+            {
+                id: newId, // Unique id for each new row
+                planId: '',
+                callActivity: '',
+                callType: ''
+            }
+        ];
+    }
+
+    // Function to handle removing a row
+    removeRow(event) {
+        const index = event.target.id;
+        this.itemList = this.itemList.filter((item, i) => i !== parseInt(index));
+    }
+
+    // Function to handle combobox changes for each field
+    handlePlanIdsChange(event) {
+        const index = event.target.dataset.index;
+        this.itemList[index].planId = event.detail.value;
+    }
+
+    handlecallActivitiesChange(event) {
+        const index = event.target.dataset.index;
+        this.itemList[index].callActivity = event.detail.value;
+    }
+
+    handlecallTypesChange(event) {
+        const index = event.target.dataset.index;
+        this.itemList[index].callType = event.detail.value;
+    }
+
+    // Save all rows inside arrFinal
+    onCreateCaseAction() {
+        // Validate that all rows have selected values before saving
+        let valid = true;
+        this.itemList.forEach((item) => {
+            if (!item.planId || !item.callActivity || !item.callType) {
+                valid = false;
+                // You can also add error messages for each row here
+            }
+        });
+
+        if (valid) {
+            // Save all rows in arrFinal if valid
+            this.arrFinal = [...this.itemList];
+            console.log('Final Data:', JSON.stringify(this.arrFinal));
+            // Handle any further processing, like calling an Apex method to save the data
+        } else {
+            console.error('Validation failed. Please ensure all rows have selected values.');
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+<template for:each={itemList} for:item="item" for:index="index">
+    <tr class="slds-hint-parent" key={item.id}>
         <!-- Plan Id Combobox -->
         <td data-label="Plan Ids">
             <lightning-combobox 
