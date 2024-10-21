@@ -1,3 +1,41 @@
+import { LightningElement } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
+
+export default class CloseSubtabsAndRedirect extends NavigationMixin(LightningElement) {
+    handleAction() {
+        // Accessing the Workspace API using the template query selector
+        const workspaceAPI = this.template.querySelector('lightning-workspace-api');
+        
+        if (workspaceAPI) {
+            workspaceAPI.getAllTabInfo().then((response) => {
+                // Close all subtabs
+                response.subtabs.forEach((subtab) => {
+                    workspaceAPI.closeTab({ tabId: subtab.tabId });
+                });
+                
+                // Redirect after closing subtabs
+                this[NavigationMixin.Navigate]({
+                    type: 'standard__webPage',
+                    attributes: {
+                        url: '/006/o' // Redirect to the desired page, replace with your destination
+                    }
+                });
+            }).catch((error) => {
+                console.error('Error fetching subtabs: ', error);
+            });
+        } else {
+            console.error('Workspace API is not available');
+        }
+    }
+}
+
+
+
+
+
+
+
+
 import { LightningElement, wire } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import { getWorkspaceApi } from 'lightning/workspaceApi';
