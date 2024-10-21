@@ -1,3 +1,33 @@
+({
+    closeSubtabsAndRedirect : function(component, event, helper) {
+        var workspaceAPI = component.find("workspace");
+        
+        // Get all tab information
+        workspaceAPI.getAllTabInfo().then(function(response) {
+            // Close all subtabs
+            response.subtabs.forEach(function(subtab) {
+                workspaceAPI.closeTab({tabId: subtab.tabId});
+            });
+
+            // Redirect to a specific page after closing subtabs
+            var urlEvent = $A.get("e.force:navigateToURL");
+            urlEvent.setParams({
+                "url": "/006/o" // Redirect to a specific URL, change as needed
+            });
+            urlEvent.fire();
+            
+        }).catch(function(error) {
+            console.log("Error: " + error);
+        });
+    }
+})
+
+
+
+
+
+
+
 function gotoURL() {
     window.location.href = "/006/o";
 }
