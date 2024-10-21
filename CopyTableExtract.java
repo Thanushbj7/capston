@@ -1,3 +1,11 @@
+function gotoURL() {
+    window.location.href = "/006/o";
+}
+
+
+
+
+
 gotoURL : function (component, event, helper) {
     var urlEvent = $A.get("e.force:navigateToURL");
     urlEvent.setParams({
