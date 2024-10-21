@@ -1,3 +1,14 @@
+gotoURL : function (component, event, helper) {
+    var urlEvent = $A.get("e.force:navigateToURL");
+    urlEvent.setParams({
+      "url": "/006/o"
+    });
+    urlEvent.fire();
+}
+
+
+
+
 <template for:each={itemList} for:item="item" for:index="index">
     <tr class="slds-hint-parent" key={item.id}>
         <td data-label="Plan Ids">
