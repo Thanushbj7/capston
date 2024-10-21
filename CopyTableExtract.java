@@ -1,3 +1,43 @@
+import { LightningElement, wire } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
+import { getWorkspaceApi } from 'lightning/workspaceApi';
+
+export default class CloseSubtabsAndRedirect extends NavigationMixin(LightningElement) {
+    // Function to close subtabs and redirect
+    handleAction() {
+        getWorkspaceApi().then((workspaceAPI) => {
+            // Fetch all tabs and subtabs
+            workspaceAPI.getAllTabInfo().then((response) => {
+                response.subtabs.forEach((subtab) => {
+                    // Close each subtab
+                    workspaceAPI.closeTab({ tabId: subtab.tabId });
+                });
+
+                // Redirect to a new page after closing subtabs
+                this[NavigationMixin.Navigate]({
+                    type: 'standard__webPage',
+                    attributes: {
+                        url: '/006/o' // URL to redirect to (Opportunities page in this case)
+                    }
+                });
+            }).catch((error) => {
+                console.error('Error fetching subtabs: ', error);
+            });
+        }).catch((error) => {
+            console.error('Error initializing workspace API: ', error);
+        });
+    }
+}
+
+
+
+
+
+
+
+
+
+
 ({
     closeSubtabsAndRedirect : function(component, event, helper) {
         var workspaceAPI = component.find("workspace");
