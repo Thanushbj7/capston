@@ -1,3 +1,25 @@
+Step 1:  Create or Update the user:
+•	If the user exists, update the user object with the new details include address fields(e.g, street,city,zip).
+•	If the user doesn’t exist, Create a new user object with all necessary fields(include address).
+
+Step 2 : Check for contact by Email:
+•	Search for any existing contact using the same email address as the user:     
+•	If a contact with the same email exists:
+o	Populate the contact’s address fields from the user’s address fields.
+•	If No contact exists:
+o	Create a new contact object with the details copied from the user: Firstname, Lastname, Email and Address.
+
+Step 3: Send Email to User:
+o	Detect Address Changes: Before updating the Contact object, Check if the address fields has changes compared to the existing data.
+o	Update Contact: If the address has changed, update the contact object with New address and sent the email.
+o	Send Email Notification: After successfully updating the Contact object’s address, send an email notification to the user informing them about the change.
+“your address has been updated successfully”.
+
+
+
+
+
+
 import { LightningElement } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 
