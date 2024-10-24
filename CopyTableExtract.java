@@ -1,3 +1,114 @@
+trigger UpdateContactFromUser on User (after insert, after update) {
+    List<Contact> contactsToUpdate = new List<Contact>();
+    List<Contact> contactsToCreate = new List<Contact>();
+    List<Messaging.SingleEmailMessage> emails = new List<Messaging.SingleEmailMessage>();
+
+    for (User u : Trigger.new) {
+        // Query existing contact with the same email
+        Contact existingContact = [SELECT Id, Email, MailingStreet, MailingCity, MailingPostalCode 
+                                   FROM Contact WHERE Email = :u.Email LIMIT 1];
+
+        if (existingContact != null) {
+            // If contact exists, update its address fields and detect changes
+            if (existingContact.MailingStreet != u.Street || 
+                existingContact.MailingCity != u.City || 
+                existingContact.MailingPostalCode != u.Zip) {
+                
+                existingContact.MailingStreet = u.Street;
+                existingContact.MailingCity = u.City;
+                existingContact.MailingPostalCode = u.Zip;
+                
+                contactsToUpdate.add(existingContact);
+                
+                // Send email notification to user
+                Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
+                email.setToAddresses(new String[] {u.Email});
+                email.setSubject('Address Updated');
+                email.setPlainTextBody('Your address has been updated successfully.');
+                emails.add(email);
+            }
+        } else {
+            // If no contact exists, create a new contact with user details
+            Contact newContact = new Contact(
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                Email = u.Email,
+                MailingStreet = u.Street,
+                MailingCity = u.City,
+                MailingPostalCode = u.Zip
+            );
+            contactsToCreate.add(newContact);
+        }
+    }
+    
+    // Perform DML operations
+    if (!contactsToUpdate.isEmpty()) {
+        update contactsToUpdate;
+        Messaging.sendEmail(emails);
+    }
+    if (!contactsToCreate.isEmpty()) {
+        insert contactsToCreate;
+    }
+}
+
+
+
+
+
+
+
+trigger UpdateContactFromUser on User (after insert, after update) {
+    List<Contact> contactsToUpdate = new List<Contact>();
+    List<Contact> contactsToCreate = new List<Contact>();
+    
+    for (User u : Trigger.new) {
+        // Query existing contact with the same email
+        Contact existingContact = [SELECT Id, Email, MailingStreet, MailingCity, MailingPostalCode 
+                                   FROM Contact WHERE Email = :u.Email LIMIT 1];
+
+        if (existingContact != null) {
+            // If contact exists, update its address fields
+            if (existingContact.MailingStreet != u.Street || 
+                existingContact.MailingCity != u.City || 
+                existingContact.MailingPostalCode != u.Zip) {
+                
+                existingContact.MailingStreet = u.Street;
+                existingContact.MailingCity = u.City;
+                existingContact.MailingPostalCode = u.Zip;
+                
+                contactsToUpdate.add(existingContact);
+            }
+        } else {
+            // If no contact exists, create a new contact with user details
+            Contact newContact = new Contact(
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                Email = u.Email,
+                MailingStreet = u.Street,
+                MailingCity = u.City,
+                MailingPostalCode = u.Zip
+            );
+            contactsToCreate.add(newContact);
+        }
+    }
+    
+    // Perform DML operations
+    if (!contactsToUpdate.isEmpty()) {
+        update contactsToUpdate;
+    }
+    if (!contactsToCreate.isEmpty()) {
+        insert contactsToCreate;
+    }
+}
+
+
+
+
+
+
+
+
+
 Step 1:  Create or Update the user:
 •	If the user exists, update the user object with the new details include address fields(e.g, street,city,zip).
 •	If the user doesn’t exist, Create a new user object with all necessary fields(include address).
