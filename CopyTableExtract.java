@@ -1,3 +1,25 @@
+trigger UserContactTrigger on User (before insert, before update) {
+    for (User newUser : Trigger.new) {
+        System.debug('Processing User with Email: ' + newUser.Email);
+
+        List<User> existingUsers = [SELECT Id FROM User WHERE Email = :newUser.Email LIMIT 1];
+        System.debug('Existing Users found: ' + existingUsers.size());
+
+        if (existingUsers.size() > 0) {
+            System.debug('User exists. Updating existing user.');
+            // Update logic here
+        } else {
+            System.debug('No existing user found. Creating new user.');
+            // Insert logic here
+        }
+    }
+}
+
+
+
+
+
+
 trigger UpdateContactFromUser on User (after insert, after update) {
     List<Contact> contactsToUpdate = new List<Contact>();
     List<Contact> contactsToCreate = new List<Contact>();
