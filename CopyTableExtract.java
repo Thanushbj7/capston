@@ -1,3 +1,9 @@
+https://developer.salesforce.com/blogs/developer
+relations/2017/01/lightning-visualforce-communication.html.
+
+
+
+
 trigger ContactAddressSync on Contact (before update) {
     // Prevent recursive execution
     if (!ContactAddressSyncHelper.isTriggerActive) {
