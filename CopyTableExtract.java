@@ -1,3 +1,9 @@
+Line: 7, Column: 1
+System.DmlException: Insert failed. First exception on row 0; first error: INVALID_OR_NULL_FOR_RESTRICTED_PICKLIST, Action: bad value for restricted picklist field: Delete: [Action__c]
+
+
+
+
 public class ContactDeleteBatch implements Database.Batchable<sObject>, Database.Stateful {
     private List<Contact> deletedContacts;
 
