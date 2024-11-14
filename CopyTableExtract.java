@@ -1,3 +1,37 @@
+// Step 1: Create a test Contact (with the current user as the owner)
+Contact testContact = new Contact(
+    FirstName = 'Test',
+    LastName = 'Contact',
+    Email = 'testcontact@example.com',
+    OwnerId = UserInfo.getUserId() // Assign current user as the owner
+);
+insert testContact;
+
+// Step 2: Fetch the contact and its owner's email
+Contact c = [SELECT Id, Name, OwnerId FROM Contact WHERE Id = :testContact.Id];
+User owner = [SELECT Email FROM User WHERE Id = :c.OwnerId];
+
+if (owner.Email != null) {
+    // Step 3: Send a test notification email
+    System.Messaging.SingleEmailMessage mail = new System.Messaging.SingleEmailMessage();
+    mail.setToAddresses(new String[] { owner.Email });
+    mail.setSubject('Contact Deletion Notification');
+    mail.setPlainTextBody('The contact "' + c.Name + '" has been deleted.');
+    System.Messaging.sendEmail(new System.Messaging.SingleEmailMessage[] { mail });
+}
+
+// Step 4: Cleanup - Delete the test contact
+delete testContact;
+
+// Optional: Add debug logs to verify
+System.debug('Notification email sent to: ' + owner.Email);
+
+
+
+
+
+
+
 public class ContactDeletionBatch implements Database.Batchable<sObject> {
     private List<Contact> contactsToProcess;
 
