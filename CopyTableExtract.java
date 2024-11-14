@@ -1,3 +1,13 @@
+execute the batch when contact record(s) get deleted and capture below items:
+
+1.	Log details
+2.	Exception Handling
+3.	Send notifications
+
+
+
+
+
 https://developer.salesforce.com/blogs/developer
 relations/2017/01/lightning-visualforce-communication.html.
 
