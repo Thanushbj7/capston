@@ -1,3 +1,80 @@
+public class ContactDeletionBatch implements Database.Batchable<sObject> {
+    private List<Contact> contactsToProcess;
+
+    // Constructor to pass deleted contacts
+    public ContactDeletionBatch(List<Contact> contacts) {
+        this.contactsToProcess = contacts;
+    }
+
+    public Database.QueryLocator start(Database.BatchableContext context) {
+        // Not querying, using the passed list of Contacts
+        return Database.getQueryLocator([SELECT Id FROM Contact WHERE Id = null]); // Dummy query
+    }
+
+    public void execute(Database.BatchableContext context, List<sObject> scope) {
+        List<Log__c> logs = new List<Log__c>();
+        List<Messaging.SingleEmailMessage> emails = new List<Messaging.SingleEmailMessage>();
+
+        // Map OwnerId to User Email for bulk processing
+        Set<Id> ownerIds = new Set<Id>();
+        for (Contact c : contactsToProcess) {
+            ownerIds.add(c.OwnerId);
+        }
+        Map<Id, User> ownerEmails = new Map<Id, User>(
+            [SELECT Id, Email FROM User WHERE Id IN :ownerIds]
+        );
+
+        for (Contact c : contactsToProcess) {
+            // Create a log entry
+            logs.add(new Log__c(
+                Object_Name__c = 'Contact',
+                Action__c = 'Delete',
+                Details__c = 'Deleted Contact Name: ' + c.Name,
+                Record_Id__c = c.Id
+            ));
+
+            // Send email notification if owner email exists
+            if (ownerEmails.containsKey(c.OwnerId)) {
+                User owner = ownerEmails.get(c.OwnerId);
+                if (owner.Email != null) {
+                    Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+                    mail.setToAddresses(new String[] { owner.Email });
+                    mail.setSubject('Contact Deletion Notification');
+                    mail.setPlainTextBody('The contact "' + c.Name + '" has been deleted.');
+                    emails.add(mail);
+                }
+            }
+        }
+
+        // Insert log records
+        if (!logs.isEmpty()) {
+            try {
+                insert logs;
+            } catch (Exception ex) {
+                System.debug('Error inserting logs: ' + ex.getMessage());
+            }
+        }
+
+        // Send emails
+        if (!emails.isEmpty()) {
+            try {
+                Messaging.sendEmail(emails);
+            } catch (Exception ex) {
+                System.debug('Error sending emails: ' + ex.getMessage());
+            }
+        }
+    }
+
+    public void finish(Database.BatchableContext context) {
+        System.debug('Batch processing for deleted contacts completed.');
+    }
+}
+
+
+
+
+
+
 Line: 7, Column: 1
 System.DmlException: Insert failed. First exception on row 0; first error: INVALID_OR_NULL_FOR_RESTRICTED_PICKLIST, Action: bad value for restricted picklist field: Delete: [Action__c]
 
