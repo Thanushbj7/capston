@@ -1,3 +1,81 @@
+public class ContactDeleteBatch implements Database.Batchable<sObject>, Database.Stateful {
+    private List<Contact> deletedContacts;
+
+    // Constructor to accept deleted Contacts
+    public ContactDeleteBatch(List<Contact> contacts) {
+        this.deletedContacts = contacts;
+    }
+
+    // Start method
+    public Database.QueryLocator start(Database.BatchableContext BC) {
+        // No query needed as the records are passed directly
+        return Database.getQueryLocator('SELECT Id FROM Contact LIMIT 1');
+    }
+
+    // Execute method
+    public void execute(Database.BatchableContext BC, List<sObject> scope) {
+        try {
+            Map<Id, String> ownerEmails = new Map<Id, String>();
+
+            // Get the owner emails for the deleted contacts
+            Set<Id> ownerIds = new Set<Id>();
+            for (Contact c : deletedContacts) {
+                if (c.OwnerId != null) {
+                    ownerIds.add(c.OwnerId);
+                }
+            }
+
+            // Query User records to retrieve owner emails
+            for (User u : [SELECT Id, Email FROM User WHERE Id IN :ownerIds]) {
+                ownerEmails.put(u.Id, u.Email);
+            }
+
+            // Log details and send notifications to owners
+            for (Contact c : deletedContacts) {
+                System.debug('Deleted Contact - Id: ' + c.Id + ', Name: ' + c.Name);
+
+                // Log record creation
+                Log__c log = new Log__c(
+                    Object_Name__c = 'Contact',
+                    Action__c = 'Delete',
+                    Details__c = 'Deleted Contact Name: ' + c.Name + ', Owner Email: ' + ownerEmails.get(c.OwnerId)
+                );
+                insert log;
+
+                // Send email notification to the Contact Owner
+                if (ownerEmails.containsKey(c.OwnerId)) {
+                    Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
+                    email.setToAddresses(new String[] {ownerEmails.get(c.OwnerId)});
+                    email.setSubject('Contact Deletion Notification');
+                    email.setPlainTextBody('The contact "' + c.Name + '" has been deleted. Please review.');
+                    Messaging.sendEmail(new Messaging.SingleEmailMessage[] {email});
+                }
+            }
+
+        } catch (Exception e) {
+            // Handle exceptions and log errors
+            System.debug('Error occurred: ' + e.getMessage());
+            Log__c errorLog = new Log__c(
+                Object_Name__c = 'Contact',
+                Action__c = 'Delete',
+                Details__c = 'Error: ' + e.getMessage()
+            );
+            insert errorLog;
+        }
+    }
+
+    // Finish method
+    public void finish(Database.BatchableContext BC) {
+        System.debug('Batch Job Finished');
+    }
+}
+
+
+
+
+
+
+
 execute the batch when contact record(s) get deleted and capture below items:
 
 1.	Log details
