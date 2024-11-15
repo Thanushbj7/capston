@@ -1,3 +1,45 @@
+<apex:page>
+    <!-- Include the Lightning Out library -->
+    <script src="/lightning/lightning.out.js"></script>
+    <script>
+        // Initialize Lightning Out
+        $Lightning.use(
+            "c:articleEditSuggestAura", // Name of your Aura Wrapper App
+            function () {
+                // Embed the Lightning Component
+                $Lightning.createComponent(
+                    "c:articleEditSuggestLWC", // LWC Name
+                    {}, // Attributes to pass (if any)
+                    "lightningContainer", // DOM element ID to render the component
+                    function (cmp) {
+                        // Save the component instance for later use
+                        window.articleEditSuggestComponent = cmp;
+                    }
+                );
+            }
+        );
+
+        // Function to call the closeTab method in the LWC
+        function closeSubtabsFromVF() {
+            if (window.articleEditSuggestComponent) {
+                window.articleEditSuggestComponent.closeTab();
+            } else {
+                alert("Lightning Component is not yet ready!");
+            }
+        }
+    </script>
+
+    <!-- Container for the Lightning Component -->
+    <div id="lightningContainer"></div>
+
+    <!-- Button to invoke the Lightning Component method -->
+    <button onclick="closeSubtabsFromVF()">Close Subtabs</button>
+</apex:page>
+
+
+
+
+
 import { LightningElement } from 'lwc';
 
 export default class ArticleEditSuggestLWC extends LightningElement {
