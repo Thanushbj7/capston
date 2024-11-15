@@ -1,3 +1,83 @@
+<aura:component implements="flexipage:availableForAllPageTypes,force:appHostable" access="global">
+    <aura:attribute name="workspace" type="Object" />
+    <lightning:workspaceAPI aura:id="workspace" />
+
+    <!-- Expose method for external call -->
+    <aura:method name="closeAllSubtabs" action="{!c.closeSubtabs}" />
+
+</aura:component>
+
+    ({
+    closeSubtabs: function (component, event, helper) {
+        let workspaceAPI = component.find("workspace");
+        workspaceAPI.getFocusedTabInfo()
+            .then((response) => {
+                let parentTabId = response.tabId;
+                return workspaceAPI.getTabInfo({ tabId: parentTabId });
+            })
+            .then((tabInfo) => {
+                let subtabs = tabInfo.subtabs || [];
+                subtabs.forEach((subtab) => {
+                    workspaceAPI.closeTab({ tabId: subtab.tabId });
+                });
+                console.log('All subtabs closed successfully');
+            })
+            .catch((error) => {
+                console.error("Error closing subtabs: ", error);
+            });
+    }
+});
+
+<apex:page>
+    <script src="/lightning/lightning.out.js"></script>
+    <script>
+        $Lightning.use(
+            "c:CloseSubtabsApp", // Your Aura App Name
+            function () {
+                // Create the Lightning Component
+                $Lightning.createComponent(
+                    "c:CloseSubtabs", // Lightning Component Name
+                    {},
+                    "lightningContainer", // DOM container for the component
+                    function (cmp) {
+                        // Expose the component globally for further interaction
+                        window.closeSubtabsComponent = cmp;
+                    }
+                );
+            }
+        );
+
+        // Function to call the Lightning Component method
+        function closeSubtabsFromVF() {
+            if (window.closeSubtabsComponent) {
+                window.closeSubtabsComponent.closeAllSubtabs();
+            } else {
+                alert("Lightning Component is not yet ready!");
+            }
+        }
+    </script>
+
+    <!-- Container for the Lightning Component -->
+    <div id="lightningContainer"></div>
+
+    <!-- Button to call Lightning Component method -->
+    <button onclick="closeSubtabsFromVF()">Close Subtabs</button>
+</apex:page>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import { LightningElement } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
