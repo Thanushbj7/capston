@@ -1,3 +1,62 @@
+import { LightningElement } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+
+export default class CloseSubtabs extends NavigationMixin(LightningElement) {
+    handleCloseSubtabs() {
+        // Access the workspace API
+        const workspaceAPI = this.template.querySelector('lightning-workspace-api');
+
+        if (workspaceAPI) {
+            workspaceAPI
+                .getFocusedTabInfo()
+                .then((focusedTab) => {
+                    const parentTabId = focusedTab.tabId;
+                    return workspaceAPI.getTabInfo({ tabId: parentTabId });
+                })
+                .then((tabInfo) => {
+                    const subtabs = tabInfo.subtabs || [];
+                    subtabs.forEach((subtab) => {
+                        workspaceAPI.closeTab({ tabId: subtab.tabId });
+                    });
+
+                    this.dispatchEvent(
+                        new ShowToastEvent({
+                            title: 'Success',
+                            message: 'All subtabs have been closed.',
+                            variant: 'success',
+                        })
+                    );
+                })
+                .catch((error) => {
+                    this.dispatchEvent(
+                        new ShowToastEvent({
+                            title: 'Error',
+                            message: `Failed to close subtabs: ${error.message}`,
+                            variant: 'error',
+                        })
+                    );
+                });
+        } else {
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Error',
+                    message: 'Workspace API is not accessible.',
+                    variant: 'error',
+                })
+            );
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
 // Step 1: Create a test Contact (with the current user as the owner)
 Contact testContact = new Contact(
     FirstName = 'Test',
