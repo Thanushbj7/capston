@@ -1,3 +1,133 @@
+@IsTest
+public class ContactTriggerHandlerTest {
+    @IsTest
+    static void testContactTrigger() {
+        // Test Data
+        Account testAccount = new Account(Name = 'Test Account');
+        insert testAccount;
+
+        Contact testContact = new Contact(FirstName = 'Test', LastName = 'Contact', AccountId = testAccount.Id);
+        
+        // Test Insert
+        Test.startTest();
+        insert testContact;
+        Test.stopTest();
+
+        // Verify Insert Notification
+        // Add assertions for email sent if appropriate
+
+        // Test Update
+        testContact.LastName = 'Updated Contact';
+        Test.startTest();
+        update testContact;
+        Test.stopTest();
+
+        // Verify Update Notification
+        // Add assertions for email sent if appropriate
+
+        // Test Delete
+        Test.startTest();
+        delete testContact;
+        Test.stopTest();
+
+        // Verify Delete Notification
+        // Add assertions for email sent if appropriate
+
+        // Test Undelete
+        Test.startTest();
+        undelete testContact;
+        Test.stopTest();
+
+        // Verify Undelete Notification
+        // Add assertions for email sent if appropriate
+    }
+}
+
+
+
+
+
+
+public class ContactTriggerHandler {
+    public static void handleTrigger(Boolean isInsert, Boolean isUpdate, Boolean isDelete, Boolean isAfter, 
+                                     List<Contact> newContacts, List<Contact> oldContacts) {
+        if (isAfter) {
+            if (isInsert) {
+                notifyCreated(newContacts);
+            } else if (isUpdate) {
+                notifyModified(newContacts);
+            } else if (isDelete) {
+                notifyDeleted(oldContacts);
+            } else if (!isInsert && !isUpdate && !isDelete) {
+                notifyUndelete(newContacts);
+            }
+        }
+    }
+
+    private static void notifyCreated(List<Contact> newContacts) {
+        for (Contact contact : newContacts) {
+            Integer oppCount = [SELECT COUNT() FROM Opportunity WHERE ContactId = :contact.Id];
+            Integer caseCount = [SELECT COUNT() FROM Case WHERE ContactId = :contact.Id];
+
+            Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
+            email.setToAddresses(new String[] {'admin@example.com'});
+            email.setSubject('Contact Created');
+            email.setPlainTextBody('A new contact has been created. Opportunities: ' + oppCount + ', Cases: ' + caseCount);
+            Messaging.sendEmail(new Messaging.SingleEmailMessage[] { email });
+        }
+    }
+
+    private static void notifyModified(List<Contact> newContacts) {
+        for (Contact contact : newContacts) {
+            Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
+            email.setToAddresses(new String[] {'admin@example.com'});
+            email.setSubject('Contact Modified');
+            email.setPlainTextBody('A contact has been modified: ' + contact.Name);
+            Messaging.sendEmail(new Messaging.SingleEmailMessage[] { email });
+        }
+    }
+
+    private static void notifyDeleted(List<Contact> oldContacts) {
+        for (Contact contact : oldContacts) {
+            Integer oppCount = [SELECT COUNT() FROM Opportunity WHERE ContactId = :contact.Id];
+            Integer caseCount = [SELECT COUNT() FROM Case WHERE ContactId = :contact.Id];
+
+            Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
+            email.setToAddresses(new String[] {'admin@example.com'});
+            email.setSubject('Contact Deleted');
+            email.setPlainTextBody('A contact has been deleted. Opportunities: ' + oppCount + ', Cases: ' + caseCount);
+            Messaging.sendEmail(new Messaging.SingleEmailMessage[] { email });
+        }
+    }
+
+    private static void notifyUndelete(List<Contact> newContacts) {
+        for (Contact contact : newContacts) {
+            Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
+            email.setToAddresses(new String[] {'admin@example.com'});
+            email.setSubject('Contact Undeleted');
+            email.setPlainTextBody('A contact has been undeleted: ' + contact.Name);
+            Messaging.sendEmail(new Messaging.SingleEmailMessage[] { email });
+        }
+    }
+}
+
+
+
+
+
+
+trigger ContactTrigger on Contact (after insert, after update, after delete, after undelete) {
+    ContactTriggerHandler.handleTrigger(Trigger.isInsert, Trigger.isUpdate, Trigger.isDelete, Trigger.isAfter, Trigger.new, Trigger.old);
+}
+
+
+
+
+
+
+
+
+
 1.	Send notification when contact record(s) get:
 
 a.	Created
