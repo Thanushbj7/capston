@@ -1,3 +1,18 @@
+1.	Send notification when contact record(s) get:
+
+a.	Created
+b.	Modified
+c.	Deleted
+d.	Undelete
+
+2.	Should display the count of opportunities and cases associated with the contact(s) when created and deleted.
+
+NOTE: Request you to follow the salesforce best practice to implement and to write the apex test classes for your apex components if any.
+
+
+
+
+
 <apex:page>
     <!-- Include the Lightning Out library -->
     <script src="/lightning/lightning.out.js"></script>
