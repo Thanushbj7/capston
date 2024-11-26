@@ -29,6 +29,85 @@ public class ContactTriggerHandlerTest {
         ContactTriggerHandler.handleTrigger(true, false, false, true, contacts, null);
         Test.stopTest();
 
+        // Assert email limit usage for Insert
+        System.assertEquals(5, Limits.getEmailInvocations(), 'Emails should be sent for Contact insert');
+
+        // Update Contacts
+        for (Contact con : contacts) {
+            con.FirstName = 'Updated Test';
+        }
+        update contacts;
+
+        // Test Update Trigger
+        Test.startTest();
+        ContactTriggerHandler.handleTrigger(false, true, false, true, contacts, null);
+        Test.stopTest();
+
+        // Assert email limit usage for Update
+        System.assertEquals(10, Limits.getEmailInvocations(), 'Emails should be sent for Contact update');
+
+        // Delete Contacts
+        delete contacts;
+
+        // Test Delete Trigger
+        Test.startTest();
+        ContactTriggerHandler.handleTrigger(false, false, true, true, null, contacts);
+        Test.stopTest();
+
+        // Assert email limit usage for Delete
+        System.assertEquals(15, Limits.getEmailInvocations(), 'Emails should be sent for Contact delete');
+
+        // Undelete Contacts
+        undelete contacts;
+
+        // Test Undelete Trigger
+        Test.startTest();
+        ContactTriggerHandler.handleTrigger(false, false, false, true, contacts, null);
+        Test.stopTest();
+
+        // Assert email limit usage for Undelete
+        System.assertEquals(20, Limits.getEmailInvocations(), 'Emails should be sent for Contact undelete');
+    }
+}
+
+
+
+
+
+
+
+
+@isTest
+public class ContactTriggerHandlerTest {
+    
+    @isTest
+    static void testHandleTrigger() {
+        // Setup test data
+        List<Contact> contacts = new List<Contact>();
+        for (Integer i = 0; i < 5; i++) {
+            contacts.add(new Contact(FirstName = 'Test', LastName = 'User' + i, Email = 'test' + i + '@example.com'));
+        }
+        insert contacts;
+
+        // Insert Opportunities related to the contacts
+        List<Opportunity> opportunities = new List<Opportunity>();
+        for (Contact con : contacts) {
+            opportunities.add(new Opportunity(Name = 'Test Opportunity', StageName = 'Prospecting', CloseDate = Date.today(), Contact_Id__c = con.Id));
+        }
+        insert opportunities;
+
+        // Insert Cases related to the contacts
+        List<Case> cases = new List<Case>();
+        for (Contact con : contacts) {
+            cases.add(new Case(Subject = 'Test Case', Status = 'New', ContactId = con.Id));
+        }
+        insert cases;
+
+        // Test Insert Trigger
+        Test.startTest();
+        ContactTriggerHandler.handleTrigger(true, false, false, true, contacts, null);
+        Test.stopTest();
+
         // Assertions for Insert
         for (Contact con : contacts) {
             List<Messaging.SingleEmailMessage> sentEmails = [SELECT Id FROM Messaging.SingleEmailMessage WHERE ToAddress = :con.Email];
