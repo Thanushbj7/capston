@@ -1,3 +1,75 @@
+public class ContactTriggerHandler {
+    public static void handleTrigger(Boolean isInsert, Boolean isUpdate, Boolean isDelete, Boolean isAfter, 
+                                     List<Contact> newContacts, List<Contact> oldContacts) {
+        if (isAfter) {
+            if (isInsert) {
+                notifyCreated(newContacts);
+            } else if (isUpdate) {
+                notifyModified(newContacts);
+            } else if (isDelete) {
+                notifyDeleted(oldContacts);
+            } else if (!isInsert && !isUpdate && !isDelete) {
+                notifyUndelete(newContacts);
+            }
+        }
+    }
+
+    private static void notifyCreated(List<Contact> newContacts) {
+        for (Contact contact : [SELECT Id, Name, Owner.Email FROM Contact WHERE Id IN :newContacts]) {
+            Integer oppCount = [SELECT COUNT() FROM Opportunity WHERE credited_RES_CRM__c = :contact.Id];
+            Integer caseCount = [SELECT COUNT() FROM Case WHERE ContactId = :contact.Id];
+
+            if (contact.Owner.Email != null) {
+                sendEmail(contact.Owner.Email, 'Contact Created', 
+                          'A new contact has been created. Opportunities: ' + oppCount + ', Cases: ' + caseCount);
+            }
+        }
+    }
+
+    private static void notifyModified(List<Contact> newContacts) {
+        for (Contact contact : [SELECT Id, Name, Owner.Email FROM Contact WHERE Id IN :newContacts]) {
+            if (contact.Owner.Email != null) {
+                sendEmail(contact.Owner.Email, 'Contact Modified', 
+                          'A contact has been modified: ' + contact.Name);
+            }
+        }
+    }
+
+    private static void notifyDeleted(List<Contact> oldContacts) {
+        for (Contact contact : [SELECT Id, Name, Owner.Email FROM Contact WHERE Id IN :oldContacts]) {
+            Integer oppCount = [SELECT COUNT() FROM Opportunity WHERE credited_RES_CRM__c = :contact.Id];
+            Integer caseCount = [SELECT COUNT() FROM Case WHERE ContactId = :contact.Id];
+
+            if (contact.Owner.Email != null) {
+                sendEmail(contact.Owner.Email, 'Contact Deleted', 
+                          'A contact has been deleted. Opportunities: ' + oppCount + ', Cases: ' + caseCount);
+            }
+        }
+    }
+
+    private static void notifyUndelete(List<Contact> newContacts) {
+        for (Contact contact : [SELECT Id, Name, Owner.Email FROM Contact WHERE Id IN :newContacts]) {
+            if (contact.Owner.Email != null) {
+                sendEmail(contact.Owner.Email, 'Contact Undeleted', 
+                          'A contact has been undeleted: ' + contact.Name);
+            }
+        }
+    }
+
+    private static void sendEmail(String toAddress, String subject, String body) {
+        Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
+        email.setToAddresses(new String[] {toAddress});
+        email.setSubject(subject);
+        email.setPlainTextBody(body);
+        Messaging.sendEmail(new Messaging.SingleEmailMessage[] { email });
+    }
+}
+
+
+
+
+
+
 SELECT COUNT() FROM OpportunityContactRole WHERE ContactId = 'CONTACT_ID_HERE'
 SELECT COUNT() FROM Case WHERE ContactId = 'CONTACT_ID_HERE'
 
