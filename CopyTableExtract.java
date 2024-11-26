@@ -24,6 +24,72 @@ public class ContactTriggerHandlerTest {
         }
         insert cases;
 
+        // Start the test
+        Test.startTest();
+
+        // Test Insert Trigger
+        ContactTriggerHandler.handleTrigger(true, false, false, true, contacts, null);
+
+        // Update Contacts
+        for (Contact con : contacts) {
+            con.FirstName = 'Updated Test';
+        }
+        update contacts;
+
+        // Test Update Trigger
+        ContactTriggerHandler.handleTrigger(false, true, false, true, contacts, null);
+
+        // Delete Contacts
+        delete contacts;
+
+        // Test Delete Trigger
+        ContactTriggerHandler.handleTrigger(false, false, true, true, null, contacts);
+
+        // Undelete Contacts
+        undelete contacts;
+
+        // Test Undelete Trigger
+        ContactTriggerHandler.handleTrigger(false, false, false, true, contacts, null);
+
+        // End the test
+        Test.stopTest();
+
+        // Assert email limit usage for all operations
+        System.assertEquals(20, Limits.getEmailInvocations(), 'Emails should be sent for all trigger operations');
+    }
+}
+
+
+
+
+
+
+@isTest
+public class ContactTriggerHandlerTest {
+    
+    @isTest
+    static void testHandleTrigger() {
+        // Setup test data
+        List<Contact> contacts = new List<Contact>();
+        for (Integer i = 0; i < 5; i++) {
+            contacts.add(new Contact(FirstName = 'Test', LastName = 'User' + i, Email = 'test' + i + '@example.com'));
+        }
+        insert contacts;
+
+        // Insert Opportunities related to the contacts
+        List<Opportunity> opportunities = new List<Opportunity>();
+        for (Contact con : contacts) {
+            opportunities.add(new Opportunity(Name = 'Test Opportunity', StageName = 'Prospecting', CloseDate = Date.today(), Contact_Id__c = con.Id));
+        }
+        insert opportunities;
+
+        // Insert Cases related to the contacts
+        List<Case> cases = new List<Case>();
+        for (Contact con : contacts) {
+            cases.add(new Case(Subject = 'Test Case', Status = 'New', ContactId = con.Id));
+        }
+        insert cases;
+
         // Test Insert Trigger
         Test.startTest();
         ContactTriggerHandler.handleTrigger(true, false, false, true, contacts, null);
