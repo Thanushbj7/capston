@@ -1,3 +1,20 @@
+SELECT ContactId, COUNT(Id) NumOfCases 
+FROM Case 
+WHERE ContactId != null 
+GROUP BY ContactId
+
+
+
+
+SELECT ContactId, COUNT(Id) NumOfOpportunities 
+FROM Opportunity 
+WHERE ContactId != null 
+GROUP BY ContactId
+
+
+
+
+
 public static void getOpportunityCount(Id contactId) {
     // Aggregate query
     AggregateResult[] results = [
