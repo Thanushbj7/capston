@@ -1,3 +1,24 @@
+List<Case> cases = [SELECT Id FROM Case WHERE ContactId != null];
+Integer numOfCases = 0;
+
+for (Case c : cases) {
+    numOfCases++;
+}
+System.debug('Total Cases: ' + numOfCases);
+
+
+
+List<Opportunity> opportunities = [SELECT Id FROM Opportunity WHERE ContactId != null];
+Integer numOfOpportunities = 0;
+
+for (Opportunity opp : opportunities) {
+    numOfOpportunities++;
+}
+System.debug('Total Opportunities: ' + numOfOpportunities);
+
+
+
+
 Integer numOfCases = [SELECT Id FROM Case WHERE ContactId != null].size();
 System.debug('Total Cases: ' + numOfCases);
 
