@@ -1,3 +1,19 @@
+Integer numOfCases = 0;
+
+AggregateResult[] caseResults = [
+    SELECT COUNT(Id) totalCases 
+    FROM Case 
+    WHERE ContactId != null
+];
+
+if (!caseResults.isEmpty()) {
+    numOfCases = (Integer) caseResults[0].get('totalCases');
+}
+System.debug('Total Cases: ' + numOfCases);
+
+
+
+
 SELECT ContactId, COUNT(Id) NumOfCases 
 FROM Case 
 WHERE ContactId != null 
