@@ -1,3 +1,17 @@
+Integer numOfCases = [SELECT Id FROM Case WHERE ContactId != null].size();
+System.debug('Total Cases: ' + numOfCases);
+
+
+
+
+Integer numOfOpportunities = [SELECT Id FROM Opportunity WHERE ContactId != null].size();
+System.debug('Total Opportunities: ' + numOfOpportunities);
+
+
+
+
+
+
 Integer numOfCases = 0;
 
 AggregateResult[] caseResults = [
