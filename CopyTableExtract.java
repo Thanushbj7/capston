@@ -1,3 +1,39 @@
+// Step 1: Create an Account
+Account account = new Account(Name = 'Test Account');
+insert account;
+
+// Step 2: Create a Contact
+Contact contact = new Contact(FirstName = 'John', LastName = 'Doe', Email = 'john.doe@example.com', AccountId = account.Id);
+insert contact;
+
+// Step 3: Create an Opportunity
+Opportunity opportunity = new Opportunity(Name = 'New Business Opportunity', StageName = 'Prospecting', CloseDate = Date.today().addDays(30), AccountId = account.Id);
+insert opportunity;
+
+// Step 4: Create an OpportunityContactRole to link the contact to the opportunity
+OpportunityContactRole contactRole = new OpportunityContactRole(ContactId = contact.Id, OpportunityId = opportunity.Id, Role = 'Decision Maker', IsPrimary = true);
+insert contactRole;
+
+// Step 5: Create a Case
+Case caseRecord = new Case(Subject = 'Customer Support Request', Status = 'New', ContactId = contact.Id, AccountId = account.Id);
+insert caseRecord;
+
+// Step 6: Count Opportunities
+Integer opportunityCount = [SELECT COUNT() FROM OpportunityContactRole WHERE ContactId = :contact.Id];
+
+// Step 7: Count Cases
+Integer caseCount = [SELECT COUNT() FROM Case WHERE ContactId = :contact.Id];
+
+// Step 8: Print the Counts
+System.debug('Number of Opportunities associated with the contact: ' + opportunityCount);
+System.debug('Number of Cases associated with the contact: ' + caseCount);
+
+
+
+
+
+
+
 public class ContactTriggerHandler {
     public static void handleTrigger(Boolean isInsert, Boolean isUpdate, Boolean isDelete, Boolean isAfter, 
                                      List<Contact> newContacts, List<Contact> oldContacts) {
