@@ -1,9 +1,12 @@
+               SELECT count(id), Credited_RES_CRM__c FROM Opportunity GROUP BY Credited_RES_CRM__c
+
+
 // Step 1: Create an Account
 Account account = new Account(Name = 'Test Account');
 insert account;
 
 // Step 2: Create a Contact
-Contact contact = new Contact(FirstName = 'John', LastName = 'Doe', Email = 'john.doe@example.com', AccountId = account.Id);
+Contact contact = new Contact(FirstName = 'John', LastName = 'Doe', Email = 'thanush.jagadeeshaiah@voya.com', AccountId = account.Id);
 insert contact;
 
 // Step 3: Create an Opportunity
