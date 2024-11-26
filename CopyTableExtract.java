@@ -1,3 +1,103 @@
+public class ContactTriggerHandler {
+     public static void handleTrigger(Boolean isInsert, Boolean isUpdate, Boolean isDelete, Boolean isAfter, 
+                                     List<Contact> newContacts, List<Contact> oldContacts) {
+        if (isAfter) {
+            if (isInsert) {
+                notifyCreated(newContacts);
+            } else if (isUpdate) {
+                notifyModified(newContacts);
+            } else if (isDelete) {
+                notifyDeleted(oldContacts);
+            } else if (!isInsert && !isUpdate && !isDelete) {
+                notifyUndelete(newContacts);
+            }
+        }
+    }
+
+ private static void notifyCreated(List<Contact> newContacts) {
+        for (Contact contact : [SELECT Id, Name, Email FROM Contact WHERE Id IN :newContacts]) {
+            if (contact.Email != null) {
+               List<Opportunity> opportunities = [SELECT Id FROM Opportunity WHERE Contact_Id__c != null];
+                        Integer numOfOpportunities = 0;
+
+                  for (Opportunity opp : opportunities) {
+                       numOfOpportunities++;
+                    }
+                List<Case> cases = [SELECT Id FROM Case WHERE ContactId != null];
+                    Integer numOfCases = 0;
+
+                  for (Case c : cases) {
+                    numOfCases++;
+                    }
+                Integer oppCount=numOfOpportunities;
+                Integer caseCount=numOfCases;
+                Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
+                email.setToAddresses(new String[] {contact.Email});
+                email.setSubject('Welcome! Your Contact Record has been Created');
+                email.setPlainTextBody('Dear ' + contact.Name + ',\n\nYour contact record has been created.\n\n' +
+                                       'Number of Opportunities: ' + oppCount + '\n' +
+                                       'Number of Cases: ' + caseCount + '\n\nBest regards,\nYour Team');
+                Messaging.sendEmail(new Messaging.SingleEmailMessage[] { email });
+            }
+        }
+    }
+
+    private static void notifyModified(List<Contact> newContacts) {
+        for (Contact contact : [SELECT Id, Name, Email FROM Contact WHERE Id IN :newContacts]) {
+            if (contact.Email != null) {
+                Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
+                email.setToAddresses(new String[] {contact.Email});
+                email.setSubject('Your Contact Record has been Updated');
+                email.setPlainTextBody('Dear ' + contact.Name + ',\n\nYour contact record has been modified.\n\nBest regards,\nYour Team');
+                Messaging.sendEmail(new Messaging.SingleEmailMessage[] { email });
+            }
+        }
+    }
+
+    private static void notifyDeleted(List<Contact> oldContacts) {
+        for (Contact contact : oldContacts) {
+            if (contact.Email != null) {
+               
+                List<Opportunity> opportunities = [SELECT Id FROM Opportunity WHERE Contact_Id__c != null];
+                        Integer numOfOpportunities = 0;
+
+                  for (Opportunity opp : opportunities) {
+                       numOfOpportunities++;
+                    }
+                List<Case> cases = [SELECT Id FROM Case WHERE ContactId != null];
+                    Integer numOfCases = 0;
+
+                  for (Case c : cases) {
+                    numOfCases++;
+                    }
+                Integer oppCount=numOfOpportunities;
+                Integer caseCount=numOfCases;
+                Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
+                email.setToAddresses(new String[] {contact.Email});
+                email.setSubject('Your Contact Record has been Deleted');
+                email.setPlainTextBody('Dear ' + contact.FirstName + ',\n\nYour contact record has been deleted.\n\n' +
+                                       'Number of Opportunities: ' + oppCount + '\n' +
+                                       'Number of Cases: ' + caseCount + '\n\nBest regards,\nYour Team');
+                Messaging.sendEmail(new Messaging.SingleEmailMessage[] { email });
+            }
+        }
+    }
+
+    private static void notifyUndelete(List<Contact> newContacts) {
+        for (Contact contact : [SELECT Id, Name, Email FROM Contact WHERE Id IN :newContacts]) {
+            if (contact.Email != null) {
+                Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
+                email.setToAddresses(new String[] {contact.Email});
+                email.setSubject('Your Contact Record has been Restored');
+                email.setPlainTextBody('Dear ' + contact.FirstName + ',\n\nYour contact record has been restored.\n\nBest regards,\nYour Team');
+                Messaging.sendEmail(new Messaging.SingleEmailMessage[] { email });
+            }
+        }
+    }
+}
+
+
+
 List<Case> cases = [SELECT Id FROM Case WHERE ContactId != null];
 Integer numOfCases = 0;
 
