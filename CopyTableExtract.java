@@ -1,3 +1,9 @@
+SELECT COUNT() FROM OpportunityContactRole WHERE ContactId = 'CONTACT_ID_HERE'
+SELECT COUNT() FROM Case WHERE ContactId = 'CONTACT_ID_HERE'
+
+
+
+
 // Step 1: Create an Account
 Account account = new Account(Name = 'Test Account');
 insert account;
