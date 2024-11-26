@@ -1,4 +1,25 @@
-               SELECT count(id), Credited_RES_CRM__c FROM Opportunity GROUP BY Credited_RES_CRM__c
+public static void getOpportunityCount(Id contactId) {
+    // Aggregate query
+    AggregateResult[] results = [
+        SELECT COUNT(Id) count, Credited_RES_CRM__c
+        FROM Opportunity
+        WHERE Credited_RES_CRM__c = :contactId
+        GROUP BY Credited_RES_CRM__c
+    ];
+
+    // Store count
+    Integer oppCount = !results.isEmpty() ? (Integer)results[0].get('count') : 0;
+
+    // Log or use the count
+    System.debug('Number of Opportunities for contact: ' + oppCount);
+}
+
+
+
+
+
+
+SELECT count(id), Credited_RES_CRM__c FROM Opportunity GROUP BY Credited_RES_CRM__c
 
 
 // Step 1: Create an Account
