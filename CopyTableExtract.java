@@ -1,3 +1,26 @@
+public class RecordCounts {
+    public Integer opportunitiesCount { get; set; }
+    public Integer casesCount { get; set; }
+}
+
+public static RecordCounts getCounts() {
+    RecordCounts counts = new RecordCounts();
+
+    counts.opportunitiesCount = [SELECT COUNT() FROM Opportunity WHERE ContactId != null];
+    counts.casesCount = [SELECT COUNT() FROM Case WHERE ContactId != null];
+
+    return counts;
+}
+
+// Usage
+RecordCounts counts = getCounts();
+System.debug('Total Opportunities: ' + counts.opportunitiesCount);
+System.debug('Total Cases: ' + counts.casesCount);
+
+
+
+
+
 Database.QueryLocator oppQueryLocator = Database.getQueryLocator('SELECT Id FROM Opportunity WHERE ContactId != null');
 Integer numOfOpportunities = oppQueryLocator.getQuerySize();
 System.debug('Total Opportunities: ' + numOfOpportunities);
