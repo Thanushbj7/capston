@@ -1,3 +1,9 @@
+Database.QueryLocator oppQueryLocator = Database.getQueryLocator('SELECT Id FROM Opportunity WHERE ContactId != null');
+Integer numOfOpportunities = oppQueryLocator.getQuerySize();
+System.debug('Total Opportunities: ' + numOfOpportunities);
+
+
+
 @isTest
 public class ContactTriggerHandlerTest {
     
